@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>博士衝刺週報｜光柵耦合器研究系統</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090f;--bg-2:#0c1018;--bg-3:#101520;--bg-4:#141b28;
+  --border:rgba(255,255,255,.06);--border-2:rgba(255,255,255,.10);
+  --t1:#eef2ff;--t2:#8896b8;--t3:#4a5672;--t4:#2a3147;
+  --blue:#3b82f6;--indigo:#818cf8;--green:#10b981;--yellow:#f59e0b;
+  --red:#ef4444;--purple:#a78bfa;--cyan:#06b6d4;--orange:#f97316;
+  --font-d:'Syne',sans-serif;--font-b:'Noto Sans TC',sans-serif;
+  --font-m:'JetBrains Mono',monospace;
+  --r1:6px;--r2:10px;--r3:16px;--r4:24px;--sw:242px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--t1);font-family:var(--font-b);font-size:14px;line-height:1.65;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(59,130,246,.012) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.012) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+
+/* ─── SIDEBAR ─── */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sw);background:var(--bg-2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;}
+.sb-logo{padding:18px 20px;border-bottom:1px solid var(--border);}
+.sb-chip{font-family:var(--font-m);font-size:8px;letter-spacing:2.5px;color:var(--blue);text-transform:uppercase;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:4px;padding:2px 6px;display:inline-block;margin-bottom:7px;}
+.sb-h{font-family:var(--font-d);font-size:13px;font-weight:700;color:var(--t1);line-height:1.35;}
+.sb-sub{font-family:var(--font-m);font-size:9px;color:var(--t3);margin-top:3px;}
+.dl{margin:10px 20px 0;padding:9px 11px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:var(--r2);}
+.dl-l{font-family:var(--font-m);font-size:8px;letter-spacing:2px;color:var(--yellow);text-transform:uppercase;margin-bottom:5px;}
+.dl-tr{height:4px;background:rgba(255,255,255,.04);border-radius:2px;overflow:hidden;margin-bottom:4px;}
+.dl-fi{height:100%;border-radius:2px;background:linear-gradient(90deg,#92400e,#f59e0b);}
+.dl-tx{font-family:var(--font-m);font-size:9px;color:var(--t3);}
+.dl-tx span{color:var(--yellow);}
+.sb-nav{flex:1;overflow-y:auto;padding:14px 0;}
+.nav-g{font-family:var(--font-m);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--t4);padding:10px 20px 4px;}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 20px;cursor:pointer;font-size:12px;color:var(--t2);border-left:2px solid transparent;transition:all .15s;text-decoration:none;user-select:none;}
+.ni:hover{background:var(--bg-3);color:var(--t1);}
+.ni.active{border-left-color:var(--blue);background:rgba(59,130,246,.06);color:var(--t1);}
+.nd{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.nd-g{background:var(--green);}.nd-y{background:var(--yellow);}.nd-b{background:var(--blue);}
+.nd-p{background:var(--purple);}.nd-gz{background:var(--t4);}.nd-o{background:var(--orange);}
+.nd-c{background:var(--cyan);}.nd-r{background:var(--red);}
+.nb{margin-left:auto;font-family:var(--font-m);font-size:8px;padding:1px 5px;border-radius:3px;background:rgba(16,185,129,.15);color:var(--green);}
+.sb-foot{padding:12px 20px;border-top:1px solid var(--border);font-family:var(--font-m);font-size:9px;color:var(--t3);line-height:1.7;}
+
+/* ─── MAIN ─── */
+.main{margin-left:var(--sw);position:relative;z-index:1;padding:30px 38px;max-width:1160px;}
+
+/* ─── PAGE HEADER ─── */
+.ph{margin-bottom:26px;padding-bottom:20px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.ph-l .wtag{font-family:var(--font-m);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue);margin-bottom:5px;display:block;}
+.ph-l h1{font-family:var(--font-d);font-size:24px;font-weight:800;line-height:1.2;color:var(--t1);}
+.ph-l .wsub{margin-top:4px;color:var(--t2);font-size:12px;}
+.ph-r{display:flex;flex-direction:column;align-items:flex-end;gap:7px;}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:10px;font-weight:600;font-family:var(--font-m);letter-spacing:.5px;}
+.bd{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.b-p{background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.35);color:var(--purple);}
+.b-g{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:var(--green);}
+.b-b{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);color:var(--blue);}
+.b-y{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:var(--yellow);}
+.b-c{background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.3);color:var(--cyan);}
+.b-r{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:var(--red);}
+
+/* ─── VIEWS ─── */
+.view{display:none;}
+.view.active{display:block;animation:fu .25s ease-out;}
+@keyframes fu{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ─── BANNER ─── */
+.banner{border-radius:var(--r4);padding:20px 24px;margin-bottom:20px;position:relative;overflow:hidden;}
+.bn-def{border:1px solid rgba(99,102,241,.22);background:linear-gradient(135deg,#0c1630,#090e1e,#0b0d28);}
+.bn-y{border:1px solid rgba(245,158,11,.22);background:linear-gradient(135deg,#120e03,#090d18,#0f0c03);}
+.bn-g{border:1px solid rgba(16,185,129,.28);background:linear-gradient(135deg,#041510,#06090f,#04100e);}
+.bn-c{border:1px solid rgba(6,182,212,.22);background:linear-gradient(135deg,#031214,#06090f,#041012);}
+.bn-r{border:1px solid rgba(239,68,68,.22);background:linear-gradient(135deg,#130808,#06090f,#130808);}
+.banner::after{content:'';position:absolute;top:-40%;right:-5%;width:240px;height:240px;background:radial-gradient(circle,rgba(99,102,241,.06) 0%,transparent 65%);pointer-events:none;}
+.bi{display:flex;gap:16px;align-items:flex-start;position:relative;}
+.bicon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.blbl{font-family:var(--font-m);font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+.btxt{font-size:13px;color:#b8c5e8;line-height:1.7;}
+.btxt strong{color:var(--t1);}
+
+/* ─── GRID ─── */
+.grid{display:grid;gap:14px;margin-bottom:14px;}
+.g2{grid-template-columns:1fr 1fr;}.g3{grid-template-columns:1fr 1fr 1fr;}
+.g21{grid-template-columns:2fr 1fr;}.g12{grid-template-columns:1fr 2fr;}
+.mb20{margin-bottom:20px;}.mb14{margin-bottom:14px;}
+
+/* ─── CARD ─── */
+.card{background:var(--bg-3);border:1px solid var(--border);border-radius:var(--r3);padding:17px 19px;transition:border-color .2s,background .2s;}
+.card:hover{border-color:var(--border-2);background:var(--bg-4);}
+.chd{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
+.cttl{font-family:var(--font-m);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--t3);}
+.cbadge{font-size:9px;padding:2px 7px;border-radius:3px;font-family:var(--font-m);}
+.cb-g{background:rgba(16,185,129,.1);color:var(--green);border:1px solid rgba(16,185,129,.2);}
+.cb-y{background:rgba(245,158,11,.1);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
+.cb-r{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.cb-p{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.2);}
+.cb-b{background:rgba(59,130,246,.1);color:var(--blue);border:1px solid rgba(59,130,246,.2);}
+.cb-c{background:rgba(6,182,212,.1);color:var(--cyan);border:1px solid rgba(6,182,212,.2);}
+
+/* ─── SCORE BARS ─── */
+.sl{display:flex;flex-direction:column;gap:9px;}
+.sr{display:flex;align-items:center;gap:11px;}
+.sn{font-size:11px;color:var(--t2);width:72px;flex-shrink:0;}
+.st{flex:1;height:5px;background:rgba(255,255,255,.04);border-radius:2px;overflow:hidden;}
+.sf{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.sf-r{background:linear-gradient(90deg,#991b1b,#ef4444);}
+.sf-y{background:linear-gradient(90deg,#92400e,#f59e0b);}
+.sf-b{background:linear-gradient(90deg,#1e40af,#3b82f6);}
+.sf-g{background:linear-gradient(90deg,#065f46,#10b981);}
+.sv{font-family:var(--font-m);font-size:11px;font-weight:700;width:20px;text-align:right;}
+.ss{font-family:var(--font-m);font-size:8px;color:var(--t4);width:20px;}
+
+/* ─── TIMELINE ─── */
+.tl{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.td{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:default;}
+.tn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-m);font-size:12px;font-weight:700;border:2px solid transparent;transition:transform .15s;}
+.td:hover .tn{transform:scale(1.08);}
+.tn-ok  {background:rgba(16,185,129,.08);border-color:#10b981;color:#10b981;}
+.tn-slow{background:rgba(245,158,11,.08);border-color:#f59e0b;color:#f59e0b;}
+.tn-zero{background:rgba(239,68,68,.15);border-color:#ef4444;color:#ef4444;box-shadow:0 0 12px rgba(239,68,68,.25);}
+.tn-star{background:rgba(167,139,250,.12);border-color:#a78bfa;color:#a78bfa;box-shadow:0 0 16px rgba(167,139,250,.25);}
+.tn-unknown{background:rgba(42,49,71,.35);border-color:var(--t3);color:var(--t3);}
+.td-date{font-family:var(--font-m);font-size:9px;color:var(--t3);}
+.td-v{font-size:13px;font-weight:700;}
+.td-d{font-size:9px;color:var(--t2);text-align:center;line-height:1.35;}
+.tl-foot{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+.tl-fl{font-family:var(--font-m);font-size:9px;color:var(--t3);letter-spacing:1px;}
+.tl-fv{font-family:var(--font-m);font-size:14px;font-weight:700;}
+
+/* ─── PROP TABLE ─── */
+.pt{width:100%;border-collapse:collapse;font-size:12px;}
+.pt th{font-family:var(--font-m);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);text-align:left;padding:7px 11px;border-bottom:1px solid var(--border);}
+.pt td{padding:8px 11px;border-bottom:1px solid rgba(255,255,255,.025);vertical-align:top;color:var(--t2);line-height:1.5;}
+.pt tr:last-child td{border-bottom:none;}
+.pt tr:hover td{background:rgba(255,255,255,.015);}
+.pt td:first-child{color:var(--t1);font-weight:500;}
+.sc{display:inline-flex;align-items:center;gap:4px;font-size:9px;padding:2px 6px;border-radius:3px;font-family:var(--font-m);white-space:nowrap;}
+.sc-done{background:rgba(16,185,129,.1);color:var(--green);border:1px solid rgba(16,185,129,.2);}
+.sc-prog{background:rgba(245,158,11,.1);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
+.sc-risk{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.sc-paper{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.3);}
+.tag{display:inline-block;font-size:9px;padding:1px 5px;border-radius:3px;font-family:var(--font-m);}
+.t-m{background:rgba(167,139,250,.1);color:#c4b5fd;}
+.t-p{background:rgba(59,130,246,.1);color:#93c5fd;}
+.t-d{background:rgba(6,182,212,.1);color:#67e8f9;}
+.t-s{background:rgba(16,185,129,.1);color:#6ee7b7;}
+
+/* ─── INSIGHT LIST ─── */
+.il{display:flex;flex-direction:column;gap:7px;}
+.ii{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-radius:var(--r2);border-left:2px solid transparent;}
+.ii-win{background:rgba(16,185,129,.06);border-color:var(--green);}
+.ii-loss{background:rgba(239,68,68,.06);border-color:var(--red);}
+.ii-next{background:rgba(99,102,241,.06);border-color:var(--indigo);}
+.ii-warn{background:rgba(245,158,11,.06);border-color:var(--yellow);}
+.ii-p{background:rgba(167,139,250,.06);border-color:var(--purple);}
+.ii-c{background:rgba(6,182,212,.06);border-color:var(--cyan);}
+.iico{font-size:13px;flex-shrink:0;padding-top:1px;}
+.iitx{font-size:12px;line-height:1.5;color:var(--t2);}
+.iitx strong{color:var(--t1);}
+
+/* ─── FLOW ─── */
+.flow{display:flex;flex-direction:column;}
+.fn{padding:8px 12px;font-size:12px;line-height:1.45;border-left:2px solid;}
+.fn-tag{font-family:var(--font-m);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:2px;}
+.fn-r{border-color:var(--red);background:rgba(239,68,68,.05);color:#fca5a5;}
+.fn-y{border-color:var(--yellow);background:rgba(245,158,11,.05);color:#fcd34d;}
+.fn-p{border-color:var(--purple);background:rgba(167,139,250,.05);color:#c4b5fd;}
+.fn-g{border-color:var(--green);background:rgba(16,185,129,.05);color:#6ee7b7;}
+.fn-b{border-color:var(--blue);background:rgba(59,130,246,.05);color:#93c5fd;}
+.farr{padding-left:12px;color:var(--t4);font-size:12px;line-height:1;padding-top:2px;padding-bottom:2px;}
+
+/* ─── LESSON ─── */
+.lesson{background:linear-gradient(135deg,rgba(167,139,250,.05),rgba(99,102,241,.05));border:1px solid rgba(167,139,250,.18);border-radius:var(--r3);padding:20px;text-align:center;}
+.l-ico{font-size:28px;margin-bottom:9px;}
+.l-q{font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--purple);line-height:1.4;margin-bottom:7px;}
+.l-b{font-size:12px;color:var(--t2);line-height:1.7;}
+.l-pill{display:inline-block;margin-top:12px;padding:5px 16px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:999px;font-size:11px;color:var(--green);font-family:var(--font-m);}
+
+/* ─── PRINCIPLE GRID ─── */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
+.pitem{padding:12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:var(--r2);text-align:center;}
+.pi-n{font-family:var(--font-m);font-size:19px;font-weight:700;color:var(--indigo);opacity:.55;display:block;margin-bottom:3px;}
+.pi-t{font-size:11px;color:var(--t2);line-height:1.45;}
+.pi-t strong{color:var(--t1);display:block;margin-bottom:1px;}
+
+/* ─── SEC HDR ─── */
+.sh{font-family:var(--font-m);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin-bottom:12px;display:flex;align-items:center;gap:12px;}
+.sh::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ─── WM BOX ─── */
+.wm{background:#060810;border:1px solid rgba(99,102,241,.25);border-radius:var(--r3);padding:20px;font-family:var(--font-m);font-size:11px;line-height:1.85;color:#94a3b8;position:relative;overflow:hidden;white-space:pre-wrap;}
+.wm::before{content:'WEEKLY_MODULE';position:absolute;top:9px;right:13px;font-size:8px;letter-spacing:2px;color:rgba(99,102,241,.4);}
+.wm-btn{margin-top:12px;padding:6px 16px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.28);border-radius:var(--r1);color:var(--indigo);font-family:var(--font-m);font-size:10px;cursor:pointer;transition:all .15s;letter-spacing:.5px;display:inline-block;}
+.wm-btn:hover{background:rgba(99,102,241,.2);}
+
+/* ─── CROSS-WEEK TABLE ─── */
+.cw-wrap{overflow-x:auto;}
+.cwt{width:100%;border-collapse:collapse;font-size:12px;min-width:740px;}
+.cwt th{font-family:var(--font-m);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+.cwt td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.025);color:var(--t2);vertical-align:middle;}
+.cwt tr:hover td{background:rgba(255,255,255,.015);}
+.cwt td:first-child{color:var(--t1);font-family:var(--font-m);font-size:11px;font-weight:600;}
+.cwt tr.rw14 td:first-child{color:var(--green);}
+.cwt tr.rw15 td:first-child{color:var(--red);}
+.tc{width:22px;height:22px;border-radius:4px;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;color:white;font-family:var(--font-m);}
+.s1{background:rgba(239,68,68,.45);}.s2{background:rgba(245,158,11,.45);}
+.s3{background:rgba(59,130,246,.45);}.s4{background:rgba(16,185,129,.45);}
+.s5{background:rgba(16,185,129,.65);}.s-{background:rgba(255,255,255,.04);color:var(--t3);}
+
+/* ─── MINI BAR CHART ─── */
+.mc{display:flex;gap:2px;align-items:flex-end;height:44px;margin-top:6px;}
+.mc-w{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;}
+.mc-b{width:100%;border-radius:2px 2px 0 0;min-height:2px;}
+.mc-l{font-family:var(--font-m);font-size:8px;color:var(--t3);}
+.mc-v{font-family:var(--font-m);font-size:8px;color:var(--t2);}
+
+/* ─── ALERTS ─── */
+.s-alert{background:linear-gradient(135deg,rgba(6,182,212,.05),rgba(59,130,246,.05));border:1px solid rgba(6,182,212,.2);border-radius:var(--r3);padding:15px 19px;display:flex;gap:13px;align-items:flex-start;}
+.sa-l{font-family:var(--font-m);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:4px;}
+.sa-t{font-size:13px;color:var(--t1);line-height:1.6;}
+.w-alert{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.22);border-radius:var(--r3);padding:14px 18px;display:flex;gap:13px;align-items:flex-start;}
+.wa-l{font-family:var(--font-m);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:4px;}
+.wa-t{font-size:13px;color:var(--t1);line-height:1.6;}
+
+/* ─── PATTERN GRID ─── */
+.pgrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pat{padding:13px;border-radius:var(--r2);border:1px solid;font-size:12px;line-height:1.55;}
+.pat-w{background:rgba(16,185,129,.05);border-color:rgba(16,185,129,.2);color:var(--t2);}
+.pat-r{background:rgba(239,68,68,.05);border-color:rgba(239,68,68,.2);color:var(--t2);}
+.pat-l{font-family:var(--font-m);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;}
+.pat-lg{color:var(--green);}.pat-lr{color:var(--red);}
+.pat strong{color:var(--t1);}
+
+/* ─── MASTER STATE ─── */
+.ms-box{background:#06080e;border:1px solid rgba(6,182,212,.2);border-radius:var(--r3);padding:20px;font-family:var(--font-m);font-size:11px;line-height:1.9;color:#94a3b8;position:relative;white-space:pre-wrap;}
+.ms-box::before{content:'MASTER_STATE · LIVE';position:absolute;top:9px;right:13px;font-size:8px;letter-spacing:2px;color:rgba(6,182,212,.45);}
+
+/* ─── UPCOMING ─── */
+.upl{display:flex;flex-direction:column;gap:7px;}
+.upi{display:flex;gap:12px;align-items:center;padding:8px 11px;background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.06);border-radius:var(--r2);}
+.uw{font-family:var(--font-m);font-size:11px;color:var(--t3);width:30px;}
+.ud{font-size:11px;color:var(--t3);width:95px;}
+.un{font-family:var(--font-m);font-size:9px;color:rgba(255,255,255,.18);letter-spacing:1px;}
+
+/* ─── 0-SHEET DAY CALLOUT ─── */
+.zero-day{display:flex;gap:12px;align-items:center;padding:12px 16px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:var(--r2);margin-bottom:10px;}
+.zero-day .zico{font-size:20px;flex-shrink:0;}
+.zero-day .ztx{font-size:12px;color:var(--t2);line-height:1.5;}
+.zero-day .ztx strong{color:#fca5a5;}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:860px){
+  .sidebar{display:none;}.main{margin-left:0;padding:18px 14px;}
+  .g2,.g3,.g21,.g12{grid-template-columns:1fr;}
+  .tl{grid-template-columns:repeat(4,1fr);}.pgrid,.pgrid2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div style="position:relative;z-index:1">
+
+<!-- ═══ SIDEBAR ═══ -->
+<nav class="sidebar">
+  <div class="sb-logo">
+    <span class="sb-chip">PhD SPRINT · NTU 光電所</span>
+    <div class="sb-h">光柵耦合器<br>研究系統</div>
+    <div class="sb-sub">寬頻化・高耦合效率</div>
+    <div class="dl">
+      <div class="dl-l">口試倒計時</div>
+      <div class="dl-tr"><div class="dl-fi" style="width:56%"></div></div>
+      <div class="dl-tx">已記錄 <span>9</span> 週 · 距口試約 <span>~7</span> 週</div>
+    </div>
+  </div>
+
+  <div class="sb-nav">
+    <div class="nav-g">週次記錄</div>
+    <a class="ni" onclick="showV('W11',this);return false" href="#"><span class="nd nd-c"></span>W11 · 03/08–03/14</a>
+    <a class="ni" onclick="showV('W12',this);return false" href="#"><span class="nd nd-y"></span>W12 · 03/15–03/21</a>
+    <a class="ni" onclick="showV('W13',this);return false" href="#"><span class="nd nd-b"></span>W13 · 03/22–03/28</a>
+    <a class="ni" onclick="showV('W14',this);return false" href="#"><span class="nd nd-g"></span>W14 · 03/29–04/04</a>
+    <a class="ni" onclick="showV('W15',this);return false" href="#"><span class="nd nd-r"></span>W15 · 04/05–04/11</a>
+    <a class="ni" onclick="showV('W16',this);return false" href="#"><span class="nd nd-p"></span>W16 · 04/12–04/18</a>
+    <a class="ni" onclick="showV('W17',this);return false" href="#"><span class="nd nd-y"></span>W17 · 04/19–04/25</a>
+    <a class="ni" onclick="showV('W18',this);return false" href="#"><span class="nd nd-r"></span>W18 · 04/26–05/02</a>
+    <a class="ni active" onclick="showV('W19',this);return false" href="#"><span class="nd nd-y"></span>W19 · 05/03–05/09<span class="nb">最新</span></a>
+    <a class="ni" onclick="showV('W20',this);return false" href="#"><span class="nd nd-gz"></span>W20 · 05/10–05/16</a>
+
+    <div class="nav-g" style="margin-top:6px">全域視圖</div>
+    <a class="ni" onclick="showV('crossweek',this);return false" href="#"><span class="nd nd-p"></span>跨週趨勢</a>
+    <a class="ni" onclick="showV('masterstate',this);return false" href="#"><span class="nd nd-o"></span>主記憶 MASTER_STATE</a>
+  </div>
+
+  <div class="sb-foot">
+    目標：η↑ · BW↑ · 口試通過<br>
+    原則：先主線 · 先推導 · 先恢復<br>
+    <span style="color:rgba(255,255,255,.2)">更新：2026/05/10 · v9</span>
+  </div>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main">
+
+<!-- ══ W11 ══ -->
+<div class="view" id="view-W11">
+  <div class="ph">
+    <div class="ph-l"><span class="wtag">W11 · 2026/03/08–03/14</span><h1>Fourier Optics 理論重建</h1><div class="wsub">命題一至三首次成形 · 45張 · 學習模式轉型</div></div>
+    <div class="ph-r"><span class="badge b-c"><span class="bd"></span>基礎建立週</span><span style="font-family:var(--font-m);font-size:10px;color:var(--t3)">口試 ~15 週後</span></div>
+  </div>
+  <div class="banner bn-c mb20">
+    <div class="bi">
+      <div class="bicon" style="background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.25)">📡</div>
+      <div><div class="blbl" style="color:var(--cyan)">本週核心摘要</div><div class="btxt">Haus Ch4–5 重讀，重建 near/far field / angular spectrum 主鏈。命題一至三<strong>首次成形</strong>，45張為近期最高。核心問題：「<strong>會說故事、不會精確證明</strong>」，3/11 起轉向底層補定義、分層封裝的正確路徑。</div></div>
+    </div>
+  </div>
+  <div class="sh mb14">量化評分（/5）</div>
+  <div class="grid g21 mb20">
+    <div class="card"><div class="chd"><div class="cttl">五維評分（/5）</div><div class="cbadge cb-c">W11</div></div><div class="sl" id="sc-W11"></div></div>
+    <div class="card"><div class="chd"><div class="cttl">七日節奏</div><div class="cbadge cb-g">45 張合計</div></div><div class="tl" id="tl-W11"></div><div class="tl-foot"><span class="tl-fl">本週合計</span><span class="tl-fv" style="color:var(--cyan)">45 張</span></div></div>
+  </div>
+  <div class="sh mb14">已完成命題</div>
+  <div class="card mb20">
+    <table class="pt"><thead><tr><th>命題</th><th>內容</th><th>類型</th><th>狀態</th></tr></thead>
+    <tbody>
+      <tr><td>命題一初版</td><td>近場/遠場 overlap invariance（Parseval/Fourier-unitary 核心）</td><td><span class="tag t-m">數學</span></td><td><span class="sc sc-done">✓ 初版</span></td></tr>
+      <tr><td>命題二</td><td>near → Fourier → angle 主線推導完成</td><td><span class="tag t-p">物理</span></td><td><span class="sc sc-done">✓ 完成</span></td></tr>
+      <tr><td>命題三初版</td><td>HG Fourier invariance 框架，手寫稿與簡報頁完成</td><td><span class="tag t-m">數學</span></td><td><span class="sc sc-done">✓ 初版</span></td></tr>
+    </tbody></table>
+  </div>
+  <div class="sh mb14">本週最重要的一課</div>
+  <div class="lesson mb20">
+    <div class="l-ico">📐</div>
+    <div class="l-q">「研究不能只靠大脈絡猜對方向。」</div>
+    <div class="l-b">真正的進步，是把每個式子的物理意義、數學步驟與可驗證結果接起來。<br>從「會說」轉成「會證明、會整理、會驗證」。</div>
+    <div class="l-pill">從說到証 · 分層封裝</div>
+  </div>
+  <div class="sh mb14">W11 週模組</div>
+  <div class="wm" id="wm-W11">WEEKLY_MODULE｜W11 · 2026/03/08–03/14
+主題：Fourier Optics 理論重建 · 命題一至三首次成形
+評分（/5）：聚焦3｜推導4｜紀律2｜模擬1｜情緒3
+頁數：3/8:5 · 3/9:6 · 3/10:2 · 3/11:7 · 3/12:11⭐ · 3/13:8⭐ · 3/14:6 → 合計45張
+一課：「研究不能只靠大脈絡猜對方向；真正的進步，是把每個式子的物理意義、數學步驟與可驗證結果接起來。」</div>
+  <button class="wm-btn" onclick="cpWM('wm-W11',this)">📋 複製 W11 模組</button>
+</div>
+
+<!-- ══ W12 ══ -->
+<div class="view" id="view-W12">
+  <div class="ph">
+    <div class="ph-l"><span class="wtag">W12 · 2026/03/15–03/21</span><h1>HG 理論基礎建立</h1><div class="wsub">命題一至三收斂 · 五層架構建立 · 23張</div></div>
+    <div class="ph-r"><span class="badge b-y"><span class="bd"></span>命題收斂週</span><span style="font-family:var(--font-m);font-size:10px;color:var(--t3)">口試 ~14 週後</span></div>
+  </div>
+  <div class="banner bn-def mb20">
+    <div class="bi">
+      <div class="bicon" style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25)">🔬</div>
+      <div><div class="blbl">本週核心摘要</div><div class="btxt">命題一<strong>雙重證明</strong>完成（微積分直接計算 + PDE z-不變性），命題三獲老師認可具備 Paper 候選資格。建立五層研究架構，完成命題五子題一。頁數縮減（23張）主因「<strong>心很浮</strong>」，稱讚後亢奮開支線，老師 3/20 校準後主動收斂。</div></div>
+    </div>
+  </div>
+  <div class="sh mb14">量化評分（/5）</div>
+  <div class="grid g21 mb20">
+    <div class="card"><div class="chd"><div class="cttl">五維評分（/5）</div><div class="cbadge cb-y">W12</div></div><div class="sl" id="sc-W12"></div></div>
+    <div class="card"><div class="chd"><div class="cttl">七日節奏</div><div class="cbadge cb-y">23 張合計</div></div><div class="tl" id="tl-W12"></div><div class="tl-foot"><span class="tl-fl">本週合計</span><span class="tl-fv" style="color:var(--yellow)">23 張</span></div></div>
+  </div>
+  <div class="sh mb14">已完成命題</div>
+  <div class="card mb20">
+    <table class="pt"><thead><tr><th>命題</th><th>內容</th><th>類型</th><th>狀態</th></tr></thead>
+    <tbody>
+      <tr><td>命題一</td><td>η 近場 = η 遠場（微積分直接 + PDE z-不變性 雙重証明）</td><td><span class="tag t-m">數學</span></td><td><span class="sc sc-done">✓ 雙重証明</span></td></tr>
+      <tr><td>命題三</td><td>HG 經 space/theta 轉換保持同一家族 → Paper 候選</td><td><span class="tag t-m">數學</span></td><td><span class="sc sc-paper">★ Paper 候選</span></td></tr>
+      <tr><td>隱含命題</td><td>Poly-Gaussian 與 HG 在 even 有限維子空間可互相展開</td><td><span class="tag t-m">數學</span></td><td><span class="sc sc-done">✓ 完成</span></td></tr>
+      <tr><td>命題五子題一</td><td>積分化簡 + 符號統一 + correlation/convolution 主架構</td><td><span class="tag t-d">推導</span></td><td><span class="sc sc-done">✓ 完成</span></td></tr>
+    </tbody></table>
+  </div>
+  <div class="sh mb14">本週最重要的一課</div>
+  <div class="lesson mb20">
+    <div class="l-ico">🧘</div>
+    <div class="l-q">「不要因稱讚或挫折改變節奏。」</div>
+    <div class="l-b">真正有效的博士研究不是情緒衝刺，<br>而是把主線壓成可証明、可累積、可驗證的結構。</div>
+    <div class="l-pill">穩定 · 可累積 · 可驗證</div>
+  </div>
+  <div class="sh mb14">W12 週模組</div>
+  <div class="wm" id="wm-W12">WEEKLY_MODULE｜W12 · 2026/03/15–03/21
+主題：HG 理論基礎建立 · 命題一至三收斂
+評分（/5）：聚焦4｜推導4｜紀律3｜模擬2｜情緒3
+頁數：3/15:4 · 3/16:4 · 3/17:3 · 3/18:3 · 3/19:3 · 3/20:3 · 3/21:3 → 合計23張
+一課：「不要因稱讚或挫折改變節奏。真正有效的博士研究，不是情緒衝刺，而是把主線壓成可証明、可累積、可驗證的結構。」</div>
+  <button class="wm-btn" onclick="cpWM('wm-W12',this)">📋 複製 W12 模組</button>
+</div>
+
+<!-- ══ W13 ══ -->
+<div class="view" id="view-W13">
+  <div class="ph">
+    <div class="ph-l"><span class="wtag">W13 · 2026/03/22–03/28</span><h1>CXDF／q-factor 結構建立</h1><div class="wsub">子題二→三接線 · 29張 · 低效帶→單日突破</div></div>
+    <div class="ph-r"><span class="badge b-y"><span class="bd"></span>轉折突破週</span><span style="font-family:var(--font-m);font-size:10px;color:var(--t3)">口試 ~13 週後</span></div>
+  </div>
+  <div class="banner bn-y mb20">
+    <div class="bi">
+      <div class="bicon" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25)">⚗️</div>
+      <div><div class="blbl" style="color:var(--yellow)">本週核心摘要</div><div class="btxt">前六天<strong>結構不清楚時不敢動手算</strong>，在 Mapping/Shape layer 打轉。老師 3/27 校準後放棄 LambertW，改用近似展開。<strong>3/28 單日 9 張</strong>完成前六天欠缺的推導，q 臨界條件確立。</div></div>
+    </div>
+  </div>
+  <div class="sh mb14">量化評分（/5）</div>
+  <div class="grid g21 mb20">
+    <div class="card"><div class="chd"><div class="cttl">五維評分（/5）</div><div class="cbadge cb-y">W13</div></div><div class="sl" id="sc-W13"></div></div>
+    <div class="card"><div class="chd"><div class="cttl">七日節奏</div><div class="cbadge cb-y">29 張合計</div></div><div class="tl" id="tl-W13"></div><div class="tl-foot"><span class="tl-fl">本週合計</span><span class="tl-fv" style="color:var(--blue)">29 張</span></div></div>
+  </div>
+  <div class="sh mb14">已完成命題</div>
+  <div class="card mb20">
+    <table class="pt"><thead><tr><th>命題</th><th>內容</th><th>類型</th><th>狀態</th></tr></thead>
+    <tbody>
+      <tr><td>子題二→三接線</td><td>CXDF 物理量定義、coupling amplitude/η(λ) 接線，3A/3B/4A/4B 地圖建立</td><td><span class="tag t-p">物理</span></td><td><span class="sc sc-done">✓ 完成</span></td></tr>
+      <tr><td>q 臨界條件</td><td>近似展開版，dq/dX=0 與 d²q/dX² 正負判斷 → Paper 候選</td><td><span class="tag t-m">數學</span></td><td><span class="sc sc-paper">★ Paper 候選</span></td></tr>
+    </tbody></table>
+  </div>
+  <div class="sh mb14">本週最重要的一課</div>
+  <div class="lesson mb20">
+    <div class="l-ico">🔧</div>
+    <div class="l-q">「等到全部想清楚才動手，就是不推進。」</div>
+    <div class="l-b">先把問題寫成可微分、可判斷的形式——研究才會從「整理」變成「推進」。</div>
+    <div class="l-pill">先算再懂 · 先通後精</div>
+  </div>
+  <div class="sh mb14">W13 週模組</div>
+  <div class="wm" id="wm-W13">WEEKLY_MODULE｜W13 · 2026/03/22–03/28
+主題：CXDF／q-factor 結構建立 · 子題二→三接線
+評分（/5）：聚焦2｜推導3｜紀律2｜模擬1｜情緒3
+頁數：3/22:5 · 3/23:2 · 3/24:5 · 3/25:3 · 3/26:3 · 3/27:2 · 3/28:9⭐ → 合計29張
+一課：「當結構感不足時，不要一直等到全部想清楚才動手。先把問題寫成可微分、可判斷的形式，研究才會從『整理』變成『推進』。」</div>
+  <button class="wm-btn" onclick="cpWM('wm-W13',this)">📋 複製 W13 模組</button>
+</div>
+
+<!-- ══ W14 ══ -->
+<div class="view" id="view-W14">
+  <div class="ph">
+    <div class="ph-l"><span class="wtag">W14 · 2026/03/29–04/04</span><h1>Lambert W 完整體系建構</h1><div class="wsub">η ≤ 2/3 純數學証明 · 38張 · 七日全數有產出</div></div>
+    <div class="ph-r"><span class="badge b-g"><span class="bd"></span>重大突破週 ⭐</span><span style="font-family:var(--font-m);font-size:10px;color:var(--t3)">口試 ~12 週後</span></div>
+  </div>
+  <div class="banner bn-g mb20">
+    <div class="bi">
+      <div class="bicon" style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3)">🏆</div>
+      <div><div class="blbl" style="color:var(--green)">本週核心摘要</div><div class="btxt">老師 3/30 校準後<strong>當晚立即建立底氣</strong>，3/31 完成 Lambert W 全體系，4/1 証明 <strong>η ≤ 2/3（純數學）</strong>。全週 <strong>38 張推導</strong>，七日全數有產出，三項 Paper 候選，為目前評分最高週。</div></div>
+    </div>
+  </div>
+  <div class="sh mb14">量化評分（/5）</div>
+  <div class="grid g21 mb20">
+    <div class="card"><div class="chd"><div class="cttl">五維評分（/5）</div><div class="cbadge cb-g">W14 最高分</div></div><div class="sl" id="sc-W14"></div></div>
+    <div class="card"><div class="chd"><div class="cttl">七日節奏</div><div class="cbadge cb-g">38 張合計</div></div><div class="tl" id="tl-W14"></div><div class="tl-foot"><span class="tl-fl">本週合計</span><span class="tl-fv" style="color:var(--green)">38 張</span></div></div>
+  </div>
+  <div class="sh mb14">已完成命題</div>
+  <div class="card mb20">
+    <table class="pt"><thead><tr><th>命題</th><th>內容</th><th>類型</th><th>狀態</th></tr></thead>
+    <tbody>
+      <tr><td>Lambert W 解析解</td><td>q&gt;1 / q&lt;1 完整解析解，含高階修正項</td><td><span class="tag t-m">數學</span></td><td><span class="sc sc-paper">★ Paper 候選</span></td></tr>
+      <tr><td>Gamma–Rho–q 等價</td><td>三設計變數數學等價關係確立</td><td><span class="tag t-m">數學</span></td><td><span class="sc sc-paper">★ Paper 候選</span></td></tr>
+      <tr><td>η ≤ 2/3 証明</td><td>Gaussian 假設下耦合效率上限純數學証明</td><td><span class="tag t-m">數學</span></td><td><span class="sc sc-paper">★ Paper 候選</span></td></tr>
+      <tr><td>Q=1 單調性</td><td>Q=1 時 η 單調遞減性質確立</td><td><span class="tag t-d">推導</span></td><td><span class="sc sc-done">✓ 完成</span></td></tr>
+    </tbody></table>
+  </div>
+  <div class="sh mb14">本週最重要的一課</div>
+  <div class="lesson mb20">
+    <div class="l-ico">⚡</div>
+    <div class="l-q">「Meeting 後立即行動，不要等到隔天。」</div>
+    <div class="l-b">老師校準一次，等於省了三天打轉。<br>最高效的時間窗口是校準後的 24 小時——底氣最足，方向最清。</div>
+    <div class="l-pill">校準 → 立即行動 → 不等</div>
+  </div>
+  <div class="sh mb14">W14 週模組</div>
+  <div class="wm" id="wm-W14">WEEKLY_MODULE｜W14 · 2026/03/29–04/04
+主題：Lambert W 完整體系建構 · η ≤ 2/3 純數學証明
+評分（/5）：聚焦4｜推導5｜紀律3｜模擬3｜情緒4
+頁數：3/29:8 · 3/30:7 · 3/31:7⭐ · 4/1:5 · 4/2:3 · 4/3:5 · 4/4:3 → 合計38張
+一課：「老師校準一次，等於省了三天打轉。Meeting後立即行動，不要等到隔天。」</div>
+  <button class="wm-btn" onclick="cpWM('wm-W14',this)">📋 複製 W14 模組</button>
+</div>
+
+<!-- ══ W15 (正式版) ══ -->
+<div class="view" id="view-W15">
+  <div class="ph">
+    <div class="ph-l">
+      <span class="wtag">W15 · 2026/04/05–04/11</span>
+      <h1>命題六骨架建立</h1>
+      <div class="wsub">三項 Paper 候選確認 · 17張 · 4/8「0張」出現 · 有效推導日僅4天</div>
+    </div>
+    <div class="ph-r">
+      <span class="badge b-r"><span class="bd"></span>命題推進・節奏危機</span>
+      <span style="font-family:var(--font-m);font-size:10px;color:var(--t3)">口試 ~11 週後</span>
+    </div>
+  </div>
+
+  <!-- 週定位 banner -->
+  <div class="banner bn-r mb20">
+    <div class="bi">
+      <div class="bicon" style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3)">⚠️</div>
+      <div>
+        <div class="blbl" style="color:var(--red)">本週定位</div>
+        <div class="btxt">
+          命題六骨架確立（FOM 最佳點、SiO₂ 頻寬不變性、HG0+HG2 凹陷邏輯），三個 Paper 候選節點確認。
+          但被<strong>商務情緒（4/8）與鼓勵後躊躇（4/9）</strong>切走兩天，有效推導日僅 4 天。
+          週總計 <strong>17 張</strong>，研究密度兩極分化：4/5–4/6 各 4 張衝刺，4/8 出現<strong>0張日</strong>。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 0張日警告 -->
+  <div class="zero-day mb20">
+    <div class="zico">🚨</div>
+    <div class="ztx"><strong>4/8 出現「0張日」</strong>——這是有記錄以來第一次全日零輸出。<br>揭示研究啟動仍部分依賴外部情緒狀態；商務牽引可使整天完全停擺。<strong>W16 起，博士輸出必須與外部情緒解耦。</strong></div>
+  </div>
+
+  <!-- 評分 + 七日節奏 -->
+  <div class="sh mb14">量化評分（/5 · 六維）</div>
+  <div class="grid g21 mb20">
+    <div class="card">
+      <div class="chd"><div class="cttl">六維評分（/5，新增恢復品質）</div><div class="cbadge cb-r">W15</div></div>
+      <div class="sl" id="sc-W15"></div>
+      <div style="margin-top:10px;padding:7px 10px;background:rgba(255,255,255,.02);border-radius:var(--r1);font-family:var(--font-m);font-size:9px;color:var(--t3)">
+        週均分 <span style="color:var(--red);font-weight:700">2.5 / 5</span> · W15 起新增「恢復品質」維度
+      </div>
+    </div>
+    <div class="card">
+      <div class="chd"><div class="cttl">七日逐張節奏</div><div class="cbadge cb-r">17 張 · 含0張日</div></div>
+      <div class="tl" id="tl-W15"></div>
+      <div class="tl-foot">
+        <span class="tl-fl">本週合計</span>
+        <span class="tl-fv" style="color:var(--yellow)">17 張</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 兩個新心理模式 -->
+  <div class="sh mb14">本週新發現的兩個心理模式（需 W16 防範）</div>
+  <div class="pgrid2 mb20">
+    <div class="pat pat-r">
+      <div class="pat-l pat-lr">⛔ 新模式一：鼓勵後躊躇</div>
+      老師<strong>正面評價</strong> → 心情浮躁 → 期待膨脹 → 行動門檻升高 → 躊躇不前<br><br>
+      4/9 實例：老師鼓勵後，整天只寫 1 張，陷入「不知從哪開始」的狀態。<br><br>
+      <strong>防範策略</strong>：收到正面評價後，立即寫下「今天唯一要完成的具體一步」，不允許停在感覺良好。
+    </div>
+    <div class="pat pat-r">
+      <div class="pat-l pat-lr">⛔ 新模式二：商務情緒替代研究</div>
+      外部商務牽引 →<strong>整天研究停擺</strong>（4/8 出現有史以來第一個 0張日）<br><br>
+      特徵：不是因為疲勞，而是情緒資源被商務佔據，無法切回研究模式。<br><br>
+      <strong>防範策略</strong>：商務事件只在指定時段處理，早晨前 90 分鐘的博士輸出不可被商務替換。
+    </div>
+  </div>
+
+  <!-- 完成命題 -->
+  <div class="sh mb14">本週完成的研究節點</div>
+  <div class="card mb20">
+    <div class="chd"><div class="cttl">命題與技術節點</div><div class="cbadge cb-p">6 項 · 3 項 Paper 候選</div></div>
+    <table class="pt"><thead><tr><th>#</th><th>內容</th><th>類型</th><th>狀態</th></tr></thead>
+    <tbody>
+      <tr><td>命題六</td><td>FOM(η×1dB頻寬) 解析最佳點：γ=1.053, Q=1.68, 頻寬~90nm, η~55%；MathCAD正確答案確認</td><td><span class="tag t-m">數學</span></td><td><span class="sc sc-paper">★ Paper 候選</span></td></tr>
+      <tr><td>SiO₂ 不變性</td><td>SiO₂ vs 空氣包層頻寬不變性推導：比值≈0.9919，後段參數與折射率無關</td><td><span class="tag t-m">數學</span></td><td><span class="sc sc-paper">★ Paper 候選</span></td></tr>
+      <tr><td>HG0+HG2 邏輯</td><td>組合中間凹陷頻譜邏輯建立，HG 正交性確認（phase 差異待數值驗證）</td><td><span class="tag t-p">物理</span></td><td><span class="sc sc-paper">★ Paper 候選</span></td></tr>
+      <tr><td>符號系統</td><td>Near-field/far-field 符號系統重建對齊；Ideal α(z) 放入 Mathcad</td><td><span class="tag t-d">推導</span></td><td><span class="sc sc-done">✓ 完成</span></td></tr>
+      <tr><td>Mode Expansion</td><td>初步模擬，產出圖像（物理意義待釐清）</td><td><span class="tag t-s">模擬</span></td><td><span class="sc sc-prog">⚠ 待釐清</span></td></tr>
+      <tr><td>Lambert W 對應</td><td>Lambert W function 與研究解對應關係建立，MathCAD 確認</td><td><span class="tag t-m">數學</span></td><td><span class="sc sc-done">✓ 完成</span></td></tr>
+    </tbody></table>
+    <div style="margin-top:8px;font-family:var(--font-m);font-size:9px;color:var(--t3)">
+      ※ 2020 Design Principle 推導在 4/7 開始，尚未完成（列入 W16 待辦）
+    </div>
+  </div>
+
+  <!-- 高風險假設 + W16主線 -->
+  <div class="grid g2 mb20">
+    <div class="card">
+      <div class="chd"><div class="cttl">高風險待驗證假設（累計中）</div><div class="cbadge cb-r">⚠ 6 項</div></div>
+      <div class="il">
+        <div class="ii ii-loss"><div class="iico">🔴</div><div class="iitx"><strong>HG0+HG2 near-field phase 關係</strong>phase 差異尚未數值確認（高）</div></div>
+        <div class="ii ii-loss"><div class="iico">🔴</div><div class="iitx"><strong>alpha(fill factor) FDTD 提取</strong>完全未執行，W16 首要任務（高）</div></div>
+        <div class="ii ii-loss"><div class="iico">🔴</div><div class="iitx"><strong>Mode Expansion monitor 物理意義</strong>圖像已取得，解讀待釐清（高）</div></div>
+        <div class="ii ii-loss"><div class="iico">🔴</div><div class="iitx"><strong>2D periodic structure cycle bug</strong>影響範圍未確認（高）</div></div>
+        <div class="ii ii-warn"><div class="iico">🟡</div><div class="iitx"><strong>4-layer slab waveguide period correction 精度</strong>（中）</div></div>
+        <div class="ii ii-warn"><div class="iico">🟡</div><div class="iitx"><strong>Ideal α(z) 與 2020 paper 定義一致性</strong>（中）</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chd"><div class="cttl">W16 主目標（老師出國自主推進）</div><div class="cbadge cb-b">必須執行</div></div>
+      <div class="il">
+        <div class="ii ii-next"><div class="iico">🎯</div><div class="iitx"><strong>alpha(fill factor) 提取</strong>從「知道要做」變成「已有數據」</div></div>
+        <div class="ii ii-next"><div class="iico">B</div><div class="iitx"><strong>HG0+HG2 phase 數值驗證</strong>清除最高風險假設</div></div>
+        <div class="ii ii-next"><div class="iico">C</div><div class="iitx"><strong>FOM 1dB 條件數學敘述寫穩</strong>命題六收尾</div></div>
+        <div class="ii ii-next"><div class="iico">D</div><div class="iitx"><strong>設計鏈打通</strong>α(z) → fill factor → period → geometry</div></div>
+        <div class="ii ii-next"><div class="iico">+</div><div class="iitx"><strong>每天至少 2 張筆記</strong>不讓 0 張日再出現</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 本週最重要的一課 -->
+  <div class="sh mb14">本週最重要的一課</div>
+  <div class="lesson mb20">
+    <div class="l-ico">🧬</div>
+    <div class="l-q">「4/11 的 3 張，才是要複製的模式。」</div>
+    <div class="l-b">
+      4/6 凌晨 2:30 睡是連鎖崩潰的起點；4/8 的 0 張揭示研究啟動仍依賴外部情緒。<br>
+      17 張中，<strong>只有 4/11 的 3 張是在相對低狀態下穩定產出</strong>——<br>這種「不靠情緒衝、低狀態仍有輸出」的節奏，才是 W16 要複製的模式。
+    </div>
+    <div class="l-pill">低狀態穩定產出 > 高情緒短衝</div>
+  </div>
+
+  <!-- 三個微調 -->
+  <div class="sh mb14">W16 三個最值得微調的習慣節奏</div>
+  <div class="pgrid mb20">
+    <div class="pitem"><span class="pi-n">01</span><div class="pi-t"><strong>完成後硬邊界</strong>當晚主線完成後 22:30 開始睡前流程，不延後</div></div>
+    <div class="pitem"><span class="pi-n">02</span><div class="pi-t"><strong>早晨啟動閉環</strong>到位後前 90 分鐘禁回訊息，先至少寫 1 張博士筆記</div></div>
+    <div class="pitem"><span class="pi-n">03</span><div class="pi-t"><strong>核心數值卡</strong>每日 30 秒默寫：γ_opt=1.053、Q_opt=1.68、η_max=2/3、BW~90nm</div></div>
+  </div>
+
+  <!-- W15 週模組 -->
+  <div class="sh mb14">W15 週模組</div>
+  <div class="wm" id="wm-W15">WEEKLY_MODULE｜W15 · 2026/04/05–04/11
+主題：命題六骨架建立 · 三項Paper候選 · 4/8「0張日」
+
+週定位：命題六骨架建立，三個Paper候選節點確認；
+但本週被商務情緒（4/8）與鼓勵後躊躇（4/9）切走兩天，
+有效推導日僅4天，週總筆記17張，研究密度兩極分化。
+
+━━━ 每日張數 ━━━
+4/5: 4張（總整理＋Lambert W計算＋命題規劃）
+4/6: 4張（Lambert W逐格推導，凌晨2:30睡）
+4/7: 1張（讀2020 Design Principle，推導未完）
+4/8: 0張 ⚠️（商務情緒，全日零輸出）
+4/9: 1張（老師鼓勵後浮躁躊躇，小整理）
+4/10: 4張（老師meeting觸發，整理近/遠場）
+4/11: 3張（近/遠場表示式詳細寫出，複習）
+週總計: 17張
+
+━━━ 六維評分（/5）━━━
+研究主線專注:3｜推導深度:4｜執行紀律:2
+模擬進度:2｜恢復品質:2｜情緒穩定:2｜週均:2.5
+
+━━━ 完成節點 ━━━
+★ 命題六：FOM解析最佳點（γ=1.053, Q=1.68, BW~90nm, η~55%）→ Paper候選
+★ SiO₂頻寬不變性：比值≈0.9919 → Paper候選
+★ HG0+HG2中間凹陷邏輯＋HG正交性確認 → Paper候選
+✅ Lambert W與研究解對應確認，MathCAD驗証
+✅ Near/far-field符號系統對齊，Ideal α(z)放入Mathcad
+⚠️ Mode Expansion monitor圖像取得（物理意義待釐清）
+
+━━━ 新發現心理模式（W16防範）━━━
+「鼓勵後躊躇」：正面評價→期待膨脹→行動門檻升高
+「商務情緒替代研究」：4/8整天0張
+
+━━━ W16主目標 ━━━
+alpha(fill factor)從「知道要做」變成「已有數據」；
+每天至少2張，不讓0張日再出現。
+
+━━━ 三個微調 ━━━
+1. 完成後硬邊界：22:30開始睡前流程
+2. 早晨前90分鐘先寫至少1張博士筆記
+3. 核心數值卡：γ_opt=1.053、Q_opt=1.68、η_max=2/3、BW~90nm
+
+━━━ 本週最重要的一課 ━━━
+4/6凌晨2:30睡是連鎖崩潰起點；4/8的0張揭示研究啟動仍依賴外部情緒。
+17張中只有4/11的3張是在低狀態下穩定產出——這才是要複製的模式。</div>
+  <button class="wm-btn" onclick="cpWM('wm-W15',this)">📋 複製 W15 模組</button>
+</div>
+
+<!-- ══ W16 (正式版) ══ -->
+<div class="view" id="view-W16">
+  <div class="ph">
+    <div class="ph-l">
+      <span class="wtag">W16 · 2026/04/12–04/18</span>
+      <h1>三軌並行・投稿戰略啟動</h1>
+      <div class="wsub">推導＋MathCAD fitting＋模擬並進 · 22張 · 4/18 姐夫對話觸發投稿戰略</div>
+    </div>
+    <div class="ph-r">
+      <span class="badge b-p"><span class="bd"></span>全面回穩 · 戰略轉折</span>
+      <span style="font-family:var(--font-m);font-size:10px;color:var(--t3)">口試 ~10 週後</span>
+    </div>
+  </div>
+
+  <div class="banner bn-def mb20">
+    <div class="bi">
+      <div class="bicon" style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25)">🔄</div>
+      <div>
+        <div class="blbl">本週定位</div>
+        <div class="btxt">
+          Michelle 4/12 晚上陪跑完成環境啟動後，主線從「<strong>能不能推</strong>」切換到「<strong>能不能收斂</strong>」；
+          推導、MathCAD fitting、模擬三軌並行推進。
+          4/18 與姐夫 30 分鐘對話觸發<strong>投稿戰略啟動</strong>，
+          W15 兩極分化的節奏全面回穩（週均 3.5 vs W15 的 2.5）。
+          關鍵洞察：<strong>外部校準槓桿 &gt; 獨立推導</strong>——姐夫 30 分鐘 &gt; 獨處 3 天。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh mb14">量化評分（/5 · 六維）</div>
+  <div class="grid g21 mb20">
+    <div class="card">
+      <div class="chd"><div class="cttl">六維評分（/5）</div><div class="cbadge cb-p">W16 · 全面回穩</div></div>
+      <div class="sl" id="sc-W16"></div>
+      <div style="margin-top:10px;padding:7px 10px;background:rgba(255,255,255,.02);border-radius:var(--r1);font-family:var(--font-m);font-size:9px;color:var(--t3)">
+        週均分 <span style="color:var(--purple);font-weight:700">3.5 / 5</span> · 推導深度首次達 5/5（繼 W14 後第二次）
+      </div>
+    </div>
+    <div class="card">
+      <div class="chd"><div class="cttl">七日逐張節奏</div><div class="cbadge cb-g">22 張 · 4/18 單日最高</div></div>
+      <div class="tl" id="tl-W16"></div>
+      <div class="tl-foot"><span class="tl-fl">本週合計</span><span class="tl-fv" style="color:var(--purple)">22 張</span></div>
+    </div>
+  </div>
+
+  <!-- 關鍵事件 -->
+  <div class="sh mb14">本週關鍵轉折點</div>
+  <div class="grid g2 mb20">
+    <div class="card">
+      <div class="chd"><div class="cttl">4/12 Michelle 陪跑——整週生產力地基</div><div class="cbadge cb-p">高槓桿觸發</div></div>
+      <div class="il">
+        <div class="ii ii-win"><div class="iico">🏃</div><div class="iitx"><strong>環境啟動效應</strong>Michelle 陪跑完成 C-band 環境清理 + 版本控制觀念建立，是後五天所有推進的地基</div></div>
+        <div class="ii ii-win"><div class="iico">💡</div><div class="iitx"><strong>結論</strong>無此晚即無後五天。外部陪伴的環境建立效應，遠超過獨自強迫自己啟動的效率</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chd"><div class="cttl">4/18 姐夫對話——投稿戰略首輪啟動</div><div class="cbadge cb-b">戰略轉折</div></div>
+      <div class="il">
+        <div class="ii ii-win"><div class="iico">📊</div><div class="iitx"><strong>四條路徑</strong>journal / conference / 所辦 / 拆分兩篇，各自對應不同時程與接受率</div></div>
+        <div class="ii ii-warn"><div class="iico">⚠️</div><div class="iitx"><strong>待確認</strong>journal 兩個月內接受率（姐夫估 10–15%）、拆兩篇可行性、快審管道（4/21 meeting 確認）</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 完成節點 -->
+  <div class="sh mb14">本週完成的研究節點</div>
+  <div class="card mb20">
+    <div class="chd"><div class="cttl">命題與技術節點</div><div class="cbadge cb-g">6 項完成</div></div>
+    <table class="pt"><thead><tr><th>#</th><th>內容</th><th>類型</th><th>狀態</th></tr></thead>
+    <tbody>
+      <tr><td>P→S→α 閉環</td><td>P(z) → S(z) → α(z) 微積分完整閉環推導</td><td><span class="tag t-m">數學</span></td><td><span class="sc sc-paper">★ Paper 候選</span></td></tr>
+      <tr><td>2020 論文重現</td><td>α(z) 反推方法獨立重現（4/18 完整 5 頁），可作方法章骨架</td><td><span class="tag t-d">推導</span></td><td><span class="sc sc-paper">★ 方法章骨架</span></td></tr>
+      <tr><td>MathCAD fitting</td><td>fitting 結果與 2020 論文高度對齊，數據正確性確認</td><td><span class="tag t-s">模擬</span></td><td><span class="sc sc-done">✓ 實証材料</span></td></tr>
+      <tr><td>η_max vs FOM 邊界</td><td>η_max（效率上限）vs 自己 FOM 最佳點的邊界辨識，contribution 差異化核心確立</td><td><span class="tag t-m">數學</span></td><td><span class="sc sc-done">✓ 差異化確立</span></td></tr>
+      <tr><td>環境建設</td><td>C-band 環境清理 + 版本控制觀念建立（4/12–13）</td><td><span class="tag t-s">工程</span></td><td><span class="sc sc-done">✓ 基礎建設</span></td></tr>
+      <tr><td>投稿戰略</td><td>四條路徑首輪評估（journal/conference/所辦/拆分），4/21 meeting 定案</td><td><span class="tag t-p">策略</span></td><td><span class="sc sc-prog">⚠ 待 Meeting 定案</span></td></tr>
+    </tbody></table>
+  </div>
+
+  <!-- 新行為模式 -->
+  <div class="sh mb14">本週新發現的兩個行為模式（W17 防範）</div>
+  <div class="pgrid2 mb20">
+    <div class="pat pat-r">
+      <div class="pat-l pat-lr">⛔ 新模式：完成後鬆懈</div>
+      完成階段性成果後，身體<strong>獎勵反應</strong>導致整日降速，起床漂移是具體表徵。<br><br>
+      4/16 實例：與小黑討論後有成就感，整天只寫 1 張。<br><br>
+      <strong>防範策略</strong>：設「10 分鐘慶祝窗」取代整日降速。完成一件事後，慶祝 10 分鐘，接著立即進入下一個 2 分鐘起手式。
+    </div>
+    <div class="pat pat-r">
+      <div class="pat-l pat-lr">⛔ 新模式：老師斷線下的備援缺失</div>
+      老師時差取消 meeting（4/17–18 兩次），未啟動<strong>書面推送備援</strong>，造成資訊真空 2 天。<br><br>
+      4/18 靠姐夫對話才補上校準，但姐夫非研究主線專家。<br><br>
+      <strong>防範策略</strong>：老師 meeting 取消時，立即改用「書面問題清單」推送給老師，不等下次 meeting。
+    </div>
+  </div>
+
+  <!-- 高風險假設 + W17主線 -->
+  <div class="grid g2 mb20">
+    <div class="card">
+      <div class="chd"><div class="cttl">高風險待驗證假設（投稿面）</div><div class="cbadge cb-r">⚠ 4 項</div></div>
+      <div class="il">
+        <div class="ii ii-warn"><div class="iico">⚠️</div><div class="iitx"><strong>Journal 兩個月內接受</strong>姐夫估 10–15%，機率待評估</div></div>
+        <div class="ii ii-warn"><div class="iico">⚠️</div><div class="iitx"><strong>論文可拆成 2 篇</strong>待 4/21 老師 meeting 確認</div></div>
+        <div class="ii ii-warn"><div class="iico">⚠️</div><div class="iitx"><strong>Conference acceptance letter 即可</strong>待所辦確認畢業資格</div></div>
+        <div class="ii ii-warn"><div class="iico">⚠️</div><div class="iitx"><strong>老師推特殊快審管道</strong>待 4/21 meeting 評估可行性</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chd"><div class="cttl">W17 主目標</div><div class="cbadge cb-b">04/19–04/25</div></div>
+      <div class="il">
+        <div class="ii ii-next"><div class="iico">🎯</div><div class="iitx"><strong>投稿戰略定案</strong>週一 meeting 帶著「已查好的推銷包」推著老師決策</div></div>
+        <div class="ii ii-next"><div class="iico">📊</div><div class="iitx"><strong>α 查表建立</strong>alpha(fill factor) 完整建立可查表格式</div></div>
+        <div class="ii ii-next"><div class="iico">📝</div><div class="iitx"><strong>論文初稿推至 80%</strong>方法章 + 結果章骨架完成</div></div>
+        <div class="ii ii-next"><div class="iico">🔧</div><div class="iitx"><strong>MathCAD 自我校驗工具</strong>老師不在時的獨立驗証機制</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四個關鍵洞察 -->
+  <div class="sh mb14">本週四個關鍵洞察</div>
+  <div class="card mb20">
+    <div class="il">
+      <div class="ii ii-win"><div class="iico">💡</div><div class="iitx"><strong>Michelle 4/12 陪跑是整週生產力地基</strong>：無此晚即無後五天——環境啟動的外部觸發效應需被納入計劃</div></div>
+      <div class="ii ii-win"><div class="iico">💡</div><div class="iitx"><strong>MathCAD fitting 可作老師不在時的自我校驗工具</strong>：只要結果與 2020 論文對齊，就是有效的獨立驗証</div></div>
+      <div class="ii ii-win"><div class="iico">💡</div><div class="iitx"><strong>「先看懂再跑模擬」的時機判斷</strong>：資訊斷層時是自保，資訊充足時才是拖延——需依情境切換</div></div>
+      <div class="ii ii-win"><div class="iico">💡</div><div class="iitx"><strong>外部戰略校準槓桿 &gt; 獨立推導</strong>：姐夫 30 分鐘 &gt; 獨處 3 天——主動尋求校準比埋頭苦推更有效</div></div>
+    </div>
+  </div>
+
+  <!-- 本週最重要的一課 -->
+  <div class="sh mb14">本週最重要的一課</div>
+  <div class="lesson mb20">
+    <div class="l-ico">🧭</div>
+    <div class="l-q">「從『能不能推』切換到『能不能收斂』。」</div>
+    <div class="l-b">
+      W16 的質變不在產出量（22 張），而在方向感切換：<br>
+      三軌並行（推導＋fitting＋模擬）說明研究已進入收斂期。<br>
+      <strong>投稿戰略啟動意味著口試時程倒數的真實感已到來。</strong>
+    </div>
+    <div class="l-pill">收斂 · 校準 · 投稿準備</div>
+  </div>
+
+  <!-- 三個微調 -->
+  <div class="sh mb14">W17 三個最值得微調的習慣節奏</div>
+  <div class="pgrid mb20">
+    <div class="pitem"><span class="pi-n">01</span><div class="pi-t"><strong>5:30 起床 + 7:00 到館</strong>晨間手機封鎖 30 分鐘，先輸出再連線</div></div>
+    <div class="pitem"><span class="pi-n">02</span><div class="pi-t"><strong>完成獎勵限 10 分鐘</strong>慶祝後立即進入下一個 2 分鐘起手式</div></div>
+    <div class="pitem"><span class="pi-n">03</span><div class="pi-t"><strong>睡前貼明日起手式</strong>寫明「明天第一件事的 2 分鐘行動」貼在螢幕邊</div></div>
+  </div>
+
+  <!-- W16 週模組 -->
+  <div class="sh mb14">W16 週模組</div>
+  <div class="wm" id="wm-W16">WEEKLY_MODULE｜W16 · 2026/04/12–04/18
+主題：三軌並行・投稿戰略啟動
+
+週定位：Michelle 4/12晚上陪跑完成環境啟動後，主線從『能不能推』切換到
+『能不能收斂』；推導、MathCAD fitting、模擬三軌並行推進，
+4/18與姐夫對話觸發投稿戰略啟動。W15兩極分化的節奏全面回穩。
+
+━━━ 每日張數 ━━━
+4/12: 2張（週檢討＋Debug＋Michelle陪跑啟動）
+4/13: 2張（C-band確認、環境汙染砍除、版本控制）
+4/14: 2張（週期重新推導＋模擬閉環成功）
+4/15: 4張（MathCAD fitting 論文相似度高，數據確認）
+4/16: 1張（小黑討論、GPT示範啟發）
+4/17: 2張（backward/forward概念、η_max vs FOM邊界辨識）
+4/18: 9張⭐（2020論文完整重現5頁＋姐夫投稿戰略對話）
+週總計: 22張
+
+━━━ 六維評分（/5）━━━
+研究主線專注:4｜推導深度:5｜執行紀律:3
+模擬進度:3｜恢復品質:3｜情緒穩定:3｜週均:3.5
+
+━━━ 完成節點 ━━━
+★ P(z)→S(z)→α(z) 微積分閉環 → Paper候選
+★ 2020論文α(z)反推方法獨立重現（4/18完整5頁）→ 方法章骨架
+✅ MathCAD fitting與2020論文高度對齊，數據正確性確認
+✅ η_max vs FOM邊界辨識，contribution差異化核心確立
+✅ C-band環境清理 + 版本控制觀念建立
+⚠️ 投稿戰略四條路徑首輪評估（4/21 meeting定案）
+
+━━━ 新發現行為模式（W17防範）━━━
+「完成後鬆懈」：階段成果→獎勵反應→整日降速（解：10分鐘慶祝窗）
+「老師斷線備援缺失」：4/17–18取消兩次meeting→資訊真空（解：書面問題清單推送）
+
+━━━ 高風險假設（投稿面）━━━
+⚠️ Journal兩月內接受率10–15%（姐夫估）
+⚠️ 論文可拆兩篇（4/21確認）
+⚠️ Conference acceptance letter即可（所辦確認）
+⚠️ 老師推快審管道（4/21評估）
+
+━━━ W17主線 ━━━
+投稿戰略定案 + α查表建立 + 論文初稿推至80%
+週一meeting帶著「已查好的推銷包」推著老師決策
+
+━━━ 三個微調 ━━━
+1. 5:30起床 + 7:00到館 + 晨間手機封鎖30分鐘
+2. 完成獎勵限10分鐘，接著進入下一個2分鐘起手式
+3. 睡前寫明日「2分鐘起手式」貼螢幕邊
+
+━━━ 關鍵洞察 ━━━
+· Michelle陪跑是整週生產力地基，無此晚即無後五天
+· MathCAD fitting可作老師不在時的獨立自我校驗工具
+· 外部戰略校準槓桿＞獨立推導（姐夫30分鐘＞獨處3天）
+· 先看懂再跑模擬：資訊斷層時是自保，資訊充足時才是拖延
+
+━━━ 本週最重要的一課 ━━━
+從「能不能推」切換到「能不能收斂」。
+三軌並行說明研究已進入收斂期；投稿戰略啟動意味著口試倒數的真實感已到來。</div>
+  <button class="wm-btn" onclick="cpWM('wm-W16',this)">📋 複製 W16 模組</button>
+</div>
+
+<!-- ══ W17 (正式版) ══ -->
+<div class="view" id="view-W17">
+  <div class="ph">
+    <div class="ph-l">
+      <span class="wtag">W17 · 2026/04/19–04/25</span>
+      <h1>Journal-first 戰略確立</h1>
+      <div class="wsub">老師 4/24 校準 · 週中被志工整切 · 2張 · 目前記錄最低產出週</div>
+    </div>
+    <div class="ph-r">
+      <span class="badge b-y"><span class="bd"></span>戰略確立・產出最低</span>
+      <span style="font-family:var(--font-m);font-size:10px;color:var(--t3)">口試 ~9 週後</span>
+    </div>
+  </div>
+
+  <div class="banner bn-y mb20">
+    <div class="bi">
+      <div class="bicon" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25)">🧭</div>
+      <div>
+        <div class="blbl" style="color:var(--yellow)">本週定位</div>
+        <div class="btxt">
+          週中被志工活動整切（4/20–4/23 資料不足），頭尾各留下一天研究火苗。
+          唯一真正的突破是 <strong>4/24 老師 meeting——Journal-first 戰略正式確立</strong>，
+          固定對焦機制（週一/週五）建立。本週研究推導、模擬、論文化均無可確認的落地產出，
+          <strong>週總計 2 張</strong>，為目前記錄中最低產出週。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh mb14">量化評分（/5 · 六維）</div>
+  <div class="grid g21 mb20">
+    <div class="card">
+      <div class="chd"><div class="cttl">六維評分（/5）</div><div class="cbadge cb-r">W17 · 週均 2.2</div></div>
+      <div class="sl" id="sc-W17"></div>
+      <div style="margin-top:10px;padding:7px 10px;background:rgba(255,255,255,.02);border-radius:var(--r1);font-family:var(--font-m);font-size:9px;color:var(--t3)">
+        週均分 <span style="color:var(--red);font-weight:700">2.2 / 5</span> · 目前記錄最低週（低於 W15 的 2.5）
+      </div>
+    </div>
+    <div class="card">
+      <div class="chd"><div class="cttl">七日節奏</div><div class="cbadge cb-r">2 張 · 4日志工黑盒</div></div>
+      <div class="tl" id="tl-W17"></div>
+      <div class="tl-foot">
+        <span class="tl-fl">本週合計</span>
+        <span class="tl-fv" style="color:var(--yellow)">2 張</span>
+        <span style="font-family:var(--font-m);font-size:9px;color:var(--t3)">※ 4/20–4/23 志工期間資料不足</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4/24 戰略節點 callout -->
+  <div style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.25);border-radius:var(--r2);margin-bottom:20px;">
+    <div style="font-size:22px;flex-shrink:0">⭐</div>
+    <div>
+      <div style="font-family:var(--font-m);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--purple);margin-bottom:4px">4/24 老師 MEETING · 本週唯一高價值事件</div>
+      <div style="font-size:12px;color:var(--t2);line-height:1.6">
+        <strong style="color:var(--t1)">畢業路徑確立</strong>：至少一篇高分第一作者 Journal + 一篇補足點數 ·
+        <strong style="color:var(--t1)">投稿方向</strong>：OE / OL 優先 ·
+        <strong style="color:var(--t1)">固定對焦</strong>：週一 / 週五 ·
+        <strong style="color:var(--t1)">研究主張</strong>：HG0+HG2 遠場設計 → CE × BW tradeoff 改善
+      </div>
+    </div>
+  </div>
+
+  <!-- 志工切斷警告 -->
+  <div class="zero-day mb20">
+    <div class="zico">🔳</div>
+    <div class="ztx"><strong>4/20–4/23 志工期間（4天）：資料完全缺失</strong><br>志工活動切走本週中段 57% 的時間，且事前無「最低研究保底機制」設計。<br>新確認的行為模式：<strong>志工-研究互斥</strong>——無保底機制時，志工週研究產出可歸零。</div>
+  </div>
+
+  <!-- 本週唯一戰略產出 -->
+  <div class="sh mb14">本週完成的節點（戰略層為主）</div>
+  <div class="card mb20">
+    <table class="pt"><thead><tr><th>#</th><th>內容</th><th>類型</th><th>狀態</th></tr></thead>
+    <tbody>
+      <tr><td>畢業路徑確立</td><td>老師 4/24 確認：至少一篇高分第一作者 Journal + 一篇補足點數</td><td><span class="tag t-p">戰略</span></td><td><span class="sc sc-done">✅ 老師確認</span></td></tr>
+      <tr><td>投稿方向</td><td>OE / OL 優先，備案 Applied Optics / IEEE；Journal-first 策略確立</td><td><span class="tag t-p">戰略</span></td><td><span class="sc sc-done">✅ 方向確立</span></td></tr>
+      <tr><td>固定對焦機制</td><td>週一 / 週五與老師固定 meeting，書面問題清單先送</td><td><span class="tag t-p">系統</span></td><td><span class="sc sc-done">✅ 機制建立</span></td></tr>
+      <tr><td>研究主張雛形</td><td>HG0+HG2 遠場設計 → CE × BW tradeoff 改善（需壓縮成一句 Abstract 語言）</td><td><span class="tag t-m">理論</span></td><td><span class="sc sc-prog">⚠ 主張成形，待論文化</span></td></tr>
+      <tr><td>老師問題回答包 v0.1</td><td>4/25 架構建立（四欄：畢業條件、投稿期刊、研究主張、本週產出）</td><td><span class="tag t-d">整理</span></td><td><span class="sc sc-prog">⚠ 架構建立，完成度待確認</span></td></tr>
+    </tbody></table>
+  </div>
+
+  <!-- 高風險假設 + W18主線 -->
+  <div class="grid g2 mb20">
+    <div class="card">
+      <div class="chd"><div class="cttl">高風險待驗證假設</div><div class="cbadge cb-r">⚠ 持續積累</div></div>
+      <div class="il">
+        <div class="ii ii-loss"><div class="iico">🔴</div><div class="iitx"><strong>HG0+HG2 near-field phase 驗證</strong>持續未完成（高風險）</div></div>
+        <div class="ii ii-warn"><div class="iico">⚠️</div><div class="iitx"><strong>OE/OL 兩個月接受機率</strong>姐夫估 10–15%，影響投稿路徑選擇</div></div>
+        <div class="ii ii-warn"><div class="iico">⚠️</div><div class="iitx"><strong>alpha(fill factor) 查表</strong>W17 執行狀態不明（資料不足）</div></div>
+        <div class="ii ii-warn"><div class="iico">⚠️</div><div class="iitx"><strong>老師推快審管道可行性</strong>待 meeting 評估</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chd"><div class="cttl">W18 主線任務</div><div class="cbadge cb-b">04/26–05/02</div></div>
+      <div class="il">
+        <div class="ii ii-next"><div class="iico">1️⃣</div><div class="iitx"><strong>論文 Introduction 草稿</strong>從研究主張的最後兩段開始寫，不從頭</div></div>
+        <div class="ii ii-next"><div class="iico">2️⃣</div><div class="iitx"><strong>週一 meeting 帶投稿推銷包</strong>四條路徑比較表，推著老師決策</div></div>
+        <div class="ii ii-next"><div class="iico">3️⃣</div><div class="iitx"><strong>alpha 查表確認或補跑</strong>限時 2h，若有數據即整理成圖</div></div>
+        <div class="ii ii-next"><div class="iico">4️⃣</div><div class="iitx"><strong>HG phase 數值驗證</strong>清除最高風險假設</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新確認行為模式 -->
+  <div class="sh mb14">本週新確認的行為模式（W18 防範）</div>
+  <div class="pgrid2 mb20">
+    <div class="pat pat-r">
+      <div class="pat-l pat-lr">⛔ 新模式：志工-研究互斥</div>
+      無「最低研究保底」機制時，志工活動可讓整週研究產出歸零。<br><br>
+      W17 實例：4/20–4/23 四天黑盒，週總計 2 張為歷史最低。<br><br>
+      <strong>防範策略</strong>：志工前一天必須設定「志工期間每日最低 1 張」的保底目標，並提前準備好可以在碎片時間完成的任務（概念整理、默寫核心數值）。
+    </div>
+    <div class="pat pat-r">
+      <div class="pat-l pat-lr">⛔ 模式再次確認：知行斷點</div>
+      老師 4/24 校準了方向，但校準後 24h 內（4/25）僅產出 1 張，<strong>老師 24h 效應第四次機會未完全觸發</strong>。<br><br>
+      W17 4/25 實例：志工後回軌日，上午真實推進時間不足 30 分鐘。<br><br>
+      <strong>根本原因</strong>：「知道要 Journal-first」和「打開論文文件寫第一段」之間，仍缺最小可執行的橋接動作。
+    </div>
+  </div>
+
+  <!-- 本週最重要的一課 -->
+  <div class="sh mb14">本週最重要的一課</div>
+  <div class="lesson mb20">
+    <div class="l-ico">🔑</div>
+    <div class="l-q">「老師校準了方向，但校準後沒有立即行動。」</div>
+    <div class="l-b">
+      「知道 Journal-first」和「今天打開文件寫第一段」之間，<br>
+      還差一個最小可執行動作——<br>
+      不是能力問題，不是意志力問題，而是<strong>缺少一個橋接儀式</strong>。
+    </div>
+    <div class="l-pill">知行合一 · 最小橋接 · 立即行動</div>
+  </div>
+
+  <!-- 三個微調 -->
+  <div class="sh mb14">W18 三個最值得微調的習慣節奏</div>
+  <div class="pgrid mb20">
+    <div class="pitem"><span class="pi-n">01</span><div class="pi-t"><strong>手機隔離啟動</strong>起床後手機放另一房間，前 90 分鐘先寫 1 段論文再看手機</div></div>
+    <div class="pitem"><span class="pi-n">02</span><div class="pi-t"><strong>Meeting 前 24h 送問題</strong>每次老師 meeting 前一天，LINE 送出三個問題清單</div></div>
+    <div class="pitem"><span class="pi-n">03</span><div class="pi-t"><strong>志工保底機制</strong>志工期間每天至少 1 張：核心數值默寫 + 概念一句話整理</div></div>
+  </div>
+
+  <!-- W17 週模組 -->
+  <div class="sh mb14">W17 週模組</div>
+  <div class="wm" id="wm-W17">WEEKLY_MODULE｜W17 · 2026/04/19–04/25
+主題：老師確立 Journal-first 戰略・本週幾乎零研究產出
+
+週定位：週中被志工活動整切，頭尾各留下一天研究火苗（4/19、4/25 各 1 張）。
+唯一真正的突破是 4/24 老師 meeting——Journal-first 戰略正式確立，
+固定對焦機制（週一/週五）建立。本週研究推導、模擬、論文化均無可
+確認的落地產出，為目前記錄中最低產出週。
+
+━━━ 每日張數 ━━━
+4/19: 1張（與奕清研究討論・醉月湖戰略規劃・晨間影片截流）
+4/20–4/23: 資料不足（志工活動，具體產出不確定）
+4/24: 0張（老師 meeting・Journal-first 戰略確立）
+4/25: 1張（志工後回軌・老師問題回答包 v0.1 架構建立）
+週總計: 2張
+
+━━━ 六維評分（/5）━━━
+研究主線專注:2｜推導深度:2｜執行紀律:2
+模擬進度:1｜恢復品質:3｜情緒穩定:3｜週均:2.2
+
+━━━ 戰略節點（本週唯一高價值產出）━━━
+✅ 老師 4/24 確認：至少一篇高分第一作者 Journal + 一篇補足點數
+✅ 投稿方向：Optics Express / Optics Letters 優先
+✅ 固定 meeting 機制：週一/週五
+✅ 研究主張雛形：HG0+HG2 遠場設計 → CE × BW tradeoff 改善
+⚠️ 志工展延需誠實執行（老師提點）
+
+━━━ 高風險假設 ━━━
+⚠️ HG0+HG2 near-field phase 驗證：持續未完成（高風險）
+⚠️ OE/OL 兩個月接受機率（姐夫估 10–15%）：影響投稿路徑
+⚠️ alpha(fill factor) 查表：W17 執行狀態不明（資料不足）
+
+━━━ 新確認行為模式 ━━━
+「志工-研究互斥」：無保底機制時，志工週可使研究產出歸零
+老師 24h 效應第四次機會：4/25 僅 1 張，效應未完全觸發
+
+━━━ W18 主線 ━━━
+論文 Introduction 草稿 + 週一 meeting 帶投稿推銷包推老師決策
+alpha(fill factor) 查表確認或補跑 · HG phase 數值驗證
+
+━━━ 本週最重要的一課 ━━━
+老師校準了方向，但校準後沒有立即行動——
+「知道 Journal-first」和「今天打開文件寫第一段」之間，
+還差一個最小可執行動作。</div>
+  <button class="wm-btn" onclick="cpWM('wm-W17',this)">📋 複製 W17 模組</button>
+</div>
+
+<!-- ══ W18 (正式版) ══ -->
+<div class="view" id="view-W18">
+  <div class="ph">
+    <div class="ph-l">
+      <span class="wtag">W18 · 2026/04/26–05/02</span>
+      <h1>1977 α 重審 · 戰略主線漂移</h1>
+      <div class="wsub">9張 · 脫離 W17 谷底 · Introduction 仍為零 · α/HG phase 連續停擺</div>
+    </div>
+    <div class="ph-r">
+      <span class="badge b-y"><span class="bd"></span>脫困・但主線漂移</span>
+      <span style="font-family:var(--font-m);font-size:10px;color:var(--t3)">口試 ~8 週後</span>
+    </div>
+  </div>
+
+  <div class="banner bn-y mb20">
+    <div class="bi">
+      <div class="bicon" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25)">🔍</div>
+      <div>
+        <div class="blbl" style="color:var(--yellow)">本週定位</div>
+        <div class="btxt">
+          W17 志工尾巴延伸到 4/26–4/27 兩天 0 張；4/28 主動回軌；4/29–5/1 進入
+          <strong>1977 Tamir–Peng α 解析解</strong>左偏/右偏物理機制重審，收口命題6子題1,2。
+          研究行為合理，但 W17 老師確立的
+          「<strong>Journal-first × 寫 Introduction</strong>」主線整週為零。
+          alpha-FF 查表、HG phase 驗證<strong>連續第二週停擺</strong>。
+          週總 9 張，脫離 W17 谷底但仍低於 W11–14 區間。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 最隱蔽失效模式警告 -->
+  <div style="display:flex;gap:12px;align-items:flex-start;padding:13px 16px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.25);border-radius:var(--r2);margin-bottom:20px;">
+    <div style="font-size:20px;flex-shrink:0">🚨</div>
+    <div>
+      <div style="font-family:var(--font-m);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:4px">新確認 · Sprint 期最隱蔽 Displacement</div>
+      <div style="font-size:12px;color:var(--t2);line-height:1.6"><strong style="color:var(--t1)">「研究行為合理 ≠ 戰略主線正確」</strong>：用「重新理解 1977」位移「論文 Introduction 第一段」。這是衝刺期最難察覺的偏航——每天都有產出感，但論文字數是零。</div>
+    </div>
+  </div>
+
+  <div class="sh mb14">量化評分（/5 · 六維）</div>
+  <div class="grid g21 mb20">
+    <div class="card">
+      <div class="chd"><div class="cttl">六維評分（/5）</div><div class="cbadge cb-r">W18 · 週均 2.0</div></div>
+      <div class="sl" id="sc-W18"></div>
+      <div style="margin-top:10px;padding:7px 10px;background:rgba(255,255,255,.02);border-radius:var(--r1);font-family:var(--font-m);font-size:9px;color:var(--t3)">
+        週均分 <span style="color:var(--red);font-weight:700">2.0 / 5</span> · 與 W17 並列為目前最低 · 恢復品質為推估值*
+      </div>
+    </div>
+    <div class="card">
+      <div class="chd"><div class="cttl">七日逐張節奏</div><div class="cbadge cb-y">9 張 · 前兩天 0 張</div></div>
+      <div class="tl" id="tl-W18"></div>
+      <div class="tl-foot"><span class="tl-fl">本週合計</span><span class="tl-fv" style="color:var(--yellow)">9 張</span></div>
+    </div>
+  </div>
+
+  <div class="sh mb14">本週唯一具寫作潛力的產出</div>
+  <div class="card mb20">
+    <div class="chd"><div class="cttl">1977 Tamir–Peng α 重審</div><div class="cbadge cb-y">理解 70% · 未轉為段落</div></div>
+    <table class="pt"><thead><tr><th>模型</th><th>物理機制</th><th>Paper 用途</th><th>狀態</th></tr></thead>
+    <tbody>
+      <tr><td>α^(c)_t（拋物線，Eq.10）</td><td>t_eff 近似主導 → 左偏（低 fill factor 端）</td><td>第二章「現有 α 模型限制」素材</td><td><span class="sc sc-prog">理解 70%，誤差項待驗</span></td></tr>
+      <tr><td>α^(c)_T（飽和，Eq.11）</td><td>sin(πd₁/d) 飽和項主導 → 右偏（高 fill factor 端）</td><td>同上，對比素材</td><td><span class="sc sc-prog">理解 70%，誤差項待驗</span></td></tr>
+      <tr><td>命題6子題1,2</td><td>收口完成，準備啟動子題3,4</td><td>命題6完整圖的基礎</td><td><span class="sc sc-done">✓ 收口</span></td></tr>
+    </tbody></table>
+    <div style="margin-top:8px;font-family:var(--font-m);font-size:9px;color:var(--t3)">
+      ⚠️ 本週理解到 70% 但未轉化為論文段落——這就是「研究行為合理 ≠ 戰略主線正確」的具體實例。
+    </div>
+  </div>
+
+  <div class="grid g2 mb20">
+    <div class="card">
+      <div class="chd"><div class="cttl">高風險假設（持續積累）</div><div class="cbadge cb-r">⚠ 4 項</div></div>
+      <div class="il">
+        <div class="ii ii-loss"><div class="iico">🔴</div><div class="iitx"><strong>alpha(fill factor) 查表</strong>連續 2 週停擺，W19 不可再延</div></div>
+        <div class="ii ii-loss"><div class="iico">🔴</div><div class="iitx"><strong>HG0+HG2 phase 數值驗證</strong>連續 3 週未動（高風險，口試直接面對）</div></div>
+        <div class="ii ii-warn"><div class="iico">⚠️</div><div class="iitx"><strong>α^(c)_t 左偏</strong>t_eff 近似主導說法待誤差項驗證</div></div>
+        <div class="ii ii-warn"><div class="iico">⚠️</div><div class="iitx"><strong>α^(c)_T 右偏</strong>sin(πd₁/d) 飽和項說法待誤差項驗證</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chd"><div class="cttl">W19 主線任務</div><div class="cbadge cb-b">05/03–05/09</div></div>
+      <div class="il">
+        <div class="ii ii-next"><div class="iico">✍️</div><div class="iitx"><strong>論文 Introduction 第一段</strong>週一 meeting 帶寫作素材，不帶物理理解報告</div></div>
+        <div class="ii ii-next"><div class="iico">📊</div><div class="iitx"><strong>命題6全圖</strong>子題3,4啟動，整合成完整命題圖</div></div>
+        <div class="ii ii-next"><div class="iico">🔬</div><div class="iitx"><strong>1977 α 左偏/右偏</strong>轉化為 paper 兩段話（70%理解→白紙黑字）</div></div>
+        <div class="ii ii-next"><div class="iico">📋</div><div class="iitx"><strong>alpha(fill factor) 查表</strong>狀態盤點，不再拖延</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 結構性問題 -->
+  <div class="sh mb14">本週新確認的失效模式 × 結構性問題</div>
+  <div class="pgrid2 mb20">
+    <div class="pat pat-r">
+      <div class="pat-l pat-lr">🔁 Sprint 期最隱蔽 Displacement（新確認）</div>
+      <strong>「研究行為合理 ≠ 戰略主線正確」</strong><br><br>
+      用「深入理解 1977 α 機制」位移「論文 Introduction 第一段」，每天都有充實感，但論文進度是 0。<br><br>
+      <strong>W19 防範策略</strong>：每天問「今天有沒有任何一個字加進論文檔？」是=成功，否=失敗，不管當天理解了多少。
+    </div>
+    <div class="pat pat-r">
+      <div class="pat-l pat-lr">🔁 晨間 YouTube 截流（第三次確認）</div>
+      W15、W17、W18 三次確認，為<strong>結構性問題，非意志力可解</strong>。<br><br>
+      每次出現都消耗最高認知能量時段（05:30–07:10）。<br><br>
+      <strong>W19 解法</strong>：物理隔離手機——起床後手機放另一房間，前 90 分鐘禁止接觸，需執行環境設計，不靠決心。
+    </div>
+  </div>
+
+  <!-- 本週最重要的一課 -->
+  <div class="sh mb14">本週最重要的一課</div>
+  <div class="lesson mb20">
+    <div class="l-ico">✍️</div>
+    <div class="l-q">「理解到 70% 就要動筆。」</div>
+    <div class="l-b">
+      寫作會反過來告訴你哪裡其實沒理解透。<br>
+      剩下的 30% 等老師指出來，比自己 polish 快十倍。<br>
+      <strong>從 W19 起：「今天有沒有把任何一個字加進論文檔？」</br>是=今天成功，否=今天失敗。</strong>
+    </div>
+    <div class="l-pill">70% 就動筆 · 寫作是最好的理解工具</div>
+  </div>
+
+  <!-- 三個微調 -->
+  <div class="sh mb14">W19 三個最值得微調的習慣節奏</div>
+  <div class="pgrid mb20">
+    <div class="pitem"><span class="pi-n">01</span><div class="pi-t"><strong>論文字數追蹤</strong>每天結束時記錄「今天論文加了幾個字」，0字=今天失敗</div></div>
+    <div class="pitem"><span class="pi-n">02</span><div class="pi-t"><strong>手機物理隔離</strong>起床後手機放另一房間，前 90 分鐘禁止接觸（結構設計，非意志力）</div></div>
+    <div class="pitem"><span class="pi-n">03</span><div class="pi-t"><strong>理解→段落轉化</strong>每次理解到 70% 就立即動筆，不追求 100% 再寫</div></div>
+  </div>
+
+  <!-- W18 週模組 -->
+  <div class="sh mb14">W18 週模組</div>
+  <div class="wm" id="wm-W18">WEEKLY_MODULE|W18 · 2026/04/26–05/02
+主題:從 W17 谷底脫困但戰略主線漂移・1977 α 重審週
+
+週定位:
+W17 志工尾巴延伸到 4/26、4/27 兩天 0 張紙;4/28 主動回軌;
+4/29–5/1 進入 1977 Tamir–Peng α 解析解的左偏/右偏物理機制
+重審,並收口命題 6 子題 1, 2,準備啟動子題 3, 4。但 W17 老師
+4/24 確立的「Journal-first × 寫 Introduction」主線整週為零,
+模擬軌道(alpha-FF、HG phase)連續第二週停擺。
+
+━━━ 每日張數 ━━━
+4/26: 0 / 4/27: 0 / 4/28: 1 / 4/29: 3
+4/30: 2 / 5/1: 2 / 5/2: 1
+週總計: 9 張
+
+━━━ 六維評分(/5)━━━
+研究主線:2|推導深度:2|執行紀律:2
+模擬進度:1|恢復品質:3*|情緒穩定:3|週均:2.0
+
+━━━ 本週唯一具寫作潛力產出 ━━━
+1977 α^(c)_t(parabolic Eq.10) vs α^(c)_T(saturation Eq.11)
+左偏/右偏物理直覺理解到 70%,可作 paper 第二章素材
+但本週未轉化為段落。命題6子題1,2收口完成。
+
+━━━ 高風險假設 ━━━
+⚠️ α^(c)_t 左偏由 t_eff 近似主導(待誤差項驗證)
+⚠️ α^(c)_T 右偏由 sin(πd1/d) 飽和項主導(待誤差項驗證)
+⚠️ alpha(fill factor) 查表連續 2 週停擺
+⚠️ HG0+HG2 phase 數值驗證連續 3 週未動
+
+━━━ 新確認的失效模式 ━━━
+「研究行為合理 ≠ 戰略主線正確」:
+  用「重新理解 1977」位移「論文 Introduction 第一段」
+  是 sprint 期最隱蔽的 displacement。
+晨間 YouTube 截流第三次確認(W15/W17/W18)
+  → 結構性問題,需物理隔離手機,非意志力可解。
+
+━━━ W19 主線 ━━━
+論文 Introduction 第一段 + 命題 6 全圖 → 週一老師 meeting
+帶寫作素材,不再帶物理理解報告。
+1977 α 左偏右偏轉化為 paper 兩段話。
+重啟 alpha(fill factor) 查表狀態盤點。
+
+━━━ 本週最重要的一課 ━━━
+寫作會反過來告訴你哪裡其實沒理解透。
+理解到 70% 就要動筆,剩下 30% 等老師指出來,比自己 polish 快十倍。
+從 W19 起:「我今天有沒有把任何一個字加進論文檔?」
+是=今天成功,否=今天失敗。</div>
+  <button class="wm-btn" onclick="cpWM('wm-W18',this)">📋 複製 W18 模組</button>
+</div>
+
+
+<!-- ══ W19 (正式版) ══ -->
+<div class="view active" id="view-W19">
+  <div class="ph">
+    <div class="ph-l">
+      <span class="wtag">W19 · 2026/05/03–05/09</span>
+      <h1>α(DC) fitting 完成 × 相位缺口揭露</h1>
+      <div class="wsub">13張 · 5/4 meeting 重開工程閉環 · 5/7 第二個 0 張日 · 5/9 七張反彈</div>
+    </div>
+    <div class="ph-r">
+      <span class="badge b-r"><span class="bd"></span>技術缺口揭露週</span>
+      <span style="font-family:var(--font-m);font-size:10px;color:var(--t3)">口試 ~7 週後</span>
+    </div>
+  </div>
+
+  <div class="banner bn-r mb20">
+    <div class="bi">
+      <div class="bicon" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25)">🔬</div>
+      <div>
+        <div class="blbl" style="color:var(--red)">本週定位</div>
+        <div class="btxt">
+          α(DC) fitting curve 數值化完成（誤差 10⁻⁴）→ 以為工程閉環完成。
+          5/4 老師 meeting 點破：<strong>從 |E|² 反推 α 丟掉了 HG0+HG2 場的局部正負相位資訊</strong>，
+          α=0 區段需插入「半週期 no-etch」翻轉後續輻射場相位，α(z) 閉環從「以為閉合」<strong>重新打開</strong>。
+          5/6–5/8 雲林三日出現逃避反應，5/7 第二個 0 張日。5/9 七張強力反彈。
+          老師同時點破結構性學習慣性：「做完一步驟不檢驗、靠直覺前進、靠別人告訴」。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 老師關鍵批評 callout -->
+  <div style="display:flex;gap:12px;align-items:flex-start;padding:13px 16px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.25);border-radius:var(--r2);margin-bottom:20px;">
+    <div style="font-size:20px;flex-shrink:0">⭐</div>
+    <div>
+      <div style="font-family:var(--font-m);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--purple);margin-bottom:4px">5/4 MEETING · 本月最有價值的進展（穿著批評的外衣）</div>
+      <div style="font-size:12px;color:var(--t2);line-height:1.6">老師當面點破三個結構性學習慣性：<strong style="color:var(--t1)">①做完一步驟不檢驗 ②靠直覺前進 ③靠別人告訴</strong>。這比完成任何一個命題更有價值——是整個 sprint 期所有卡點的根本解釋。</div>
+    </div>
+  </div>
+
+  <div class="sh mb14">量化評分（/5 · 六維・含半分）</div>
+  <div class="grid g21 mb20">
+    <div class="card">
+      <div class="chd"><div class="cttl">六維評分（/5）</div><div class="cbadge cb-r">W19 · 週均 2.17</div></div>
+      <div class="sl" id="sc-W19"></div>
+      <div style="margin-top:10px;padding:7px 10px;background:rgba(255,255,255,.02);border-radius:var(--r1);font-family:var(--font-m);font-size:9px;color:var(--t3)">
+        週均分 <span style="color:var(--red);font-weight:700">2.17 / 5</span> · 近五週最低（首次含半分評分）
+      </div>
+    </div>
+    <div class="card">
+      <div class="chd"><div class="cttl">七日逐張節奏</div><div class="cbadge cb-r">13 張 · 5/7 第二個 0 張日</div></div>
+      <div class="tl" id="tl-W19"></div>
+      <div class="tl-foot"><span class="tl-fl">本週合計</span><span class="tl-fv" style="color:var(--yellow)">13 張</span></div>
+    </div>
+  </div>
+
+  <div class="sh mb14">本週已完成節點</div>
+  <div class="card mb20">
+    <table class="pt"><thead><tr><th>項目</th><th>內容</th><th>類型</th><th>狀態</th></tr></thead>
+    <tbody>
+      <tr><td>α(DC) fitting</td><td>fitting curve 數值化完成，誤差 10⁻⁴ → 方法章圖</td><td><span class="tag t-s">模擬</span></td><td><span class="sc sc-paper">★ Paper 候選（方法章圖）</span></td></tr>
+      <tr><td>相位缺口識別</td><td>|E|²→α 反推丟掉 HG0+HG2 局部正負相位資訊（5/4 老師點破）</td><td><span class="tag t-p">物理</span></td><td><span class="sc sc-prog">⚠ 缺口已識別，待工程解決</span></td></tr>
+      <tr><td>半週期 no-etch 概念</td><td>α=0 區段插入 no-etch 以翻轉後續輻射場相位的方案</td><td><span class="tag t-m">數學</span></td><td><span class="sc sc-prog">⚠ 概念提出，待 FDTD 驗証</span></td></tr>
+      <tr><td>歷史候選沿用</td><td>η near=far / η≤2/3 / Lambert W / FOM最佳點 / SiO₂不變 / P→S→α 閉環</td><td><span class="tag t-m">數學</span></td><td><span class="sc sc-paper">★ 沿用</span></td></tr>
+    </tbody></table>
+  </div>
+
+  <div class="grid g2 mb20">
+    <div class="card">
+      <div class="chd"><div class="cttl">新增 / 重新打開的高風險問題</div><div class="cbadge cb-r">⚠ 4 項</div></div>
+      <div class="il">
+        <div class="ii ii-loss"><div class="iico">🔴</div><div class="iitx"><strong>半週期修正能正確翻轉相位</strong>下週 FDTD 第一輪可測</div></div>
+        <div class="ii ii-loss"><div class="iico">🔴</div><div class="iitx"><strong>DC=100% 在 α=0 段正確性</strong>直接 FDTD 兩版本對跑才能科學確認</div></div>
+        <div class="ii ii-warn"><div class="iico">🟡</div><div class="iitx"><strong>α 變化段落邊界（不滿一週期）</strong>邊界處理需重做</div></div>
+        <div class="ii ii-warn"><div class="iico">🟡</div><div class="iitx"><strong>光纖場中心對齊 grating 零點</strong>FDTD 實作細節待釐清</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chd"><div class="cttl">W20 主線任務</div><div class="cbadge cb-b">05/10–05/16</div></div>
+      <div class="il">
+        <div class="ii ii-next"><div class="iico">1️⃣</div><div class="iitx"><strong>5/12 前</strong>baseline 2D FDTD 完成（不含半週期修正）</div></div>
+        <div class="ii ii-next"><div class="iico">2️⃣</div><div class="iitx"><strong>5/13–14</strong>修正版 FDTD 並做場型對比</div></div>
+        <div class="ii ii-next"><div class="iico">3️⃣</div><div class="iitx"><strong>5/15 meeting 前</strong>一張 A4 對比圖 + 三個自我質疑點，主動拋給老師</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 雲林逃避反應 -->
+  <div class="zero-day mb20">
+    <div class="zico">🔳</div>
+    <div class="ztx"><strong>5/7 第二個 0 張日（雲林三日逃避反應）</strong><br>5/6–5/8 雲林三日，因 5/4 meeting 認知衝擊後未在 24h 內整理，積累成逃避反應。近 9 週最低 13 張的主因。<strong>新習慣三：認知衝擊後 24 小時內強制書寫整理，不是 3 天後。</strong></div>
+  </div>
+
+  <div class="sh mb14">本週最重要的一課</div>
+  <div class="lesson mb20">
+    <div class="l-ico">🔬</div>
+    <div class="l-q">「α(DC) fitting 寫出來 ≠ α(z) 閉環完成。」</div>
+    <div class="l-b">
+      從 |E|² 反推丟掉了相位，這個缺口在數學上看不見，<br>
+      在工程實作會以破壞性干涉的方式展現。<br>
+      <strong>5/4 老師當場點破，是這個月最有價值的進展——<br>即使它穿著批評的外衣。</strong>
+    </div>
+    <div class="l-pill">每步加 5 秒反問「我憑什麼覺得這對？」</div>
+  </div>
+
+  <div class="sh mb14">三個新習慣（從明天起）</div>
+  <div class="pgrid mb20">
+    <div class="pitem"><span class="pi-n">01</span><div class="pi-t"><strong>5 秒反問</strong>工程步驟後問「我憑什麼覺得這對？」答不出就標記待驗證，便利貼貼螢幕</div></div>
+    <div class="pitem"><span class="pi-n">02</span><div class="pi-t"><strong>問題定義先行</strong>每日筆記第一行寫「今日問題定義」而非日期</div></div>
+    <div class="pitem"><span class="pi-n">03</span><div class="pi-t"><strong>認知衝擊 24h 整理</strong>老師批評或重大發現後，24小時內強制書寫整理</div></div>
+  </div>
+
+  <div class="sh mb14">W19 週模組</div>
+  <div class="wm" id="wm-W19">WEEKLY_MODULE｜W19 · 2026/05/03–05/09
+主題：α(DC) fitting 完成 × meeting 揭露 |E|² 路徑的相位缺口
+
+━━━ 每日張數 ━━━
+5/3:1 · 5/4:2 · 5/5:1 · 5/6:1 · 5/7:0 · 5/8:1 · 5/9:7
+合計 13 張
+
+━━━ 六維評分（/5，含半分）━━━
+研究聚焦:2｜推導深度:2.5｜執行紀律:1.5
+模擬推進:2.5｜恢復品質:2.5｜情緒穩定:2｜週均:2.17
+
+━━━ 本週核心突破 ━━━
+✅ α(DC) fitting curve 數值化完成（誤差 10⁻⁴）→ Paper候選（方法章圖）
+✅ 5/4 meeting 揭露關鍵缺口：|E|²→α 丟掉 HG0+HG2 局部正負相位
+  → α=0 段需插入半週期 no-etch 翻轉輻射場相位
+  → α(z) 工程閉環重新打開
+
+━━━ 新增高風險問題 ━━━
+⚠️ 半週期修正能正確翻轉相位（下週 FDTD 第一輪可測）
+⚠️ DC=100% 在 α=0 段正確性（需 FDTD 兩版本對跑）
+⚠️ α 變化段落邊界處理需重做
+⚠️ 光纖場中心對齊 grating 零點 FDTD 實作
+
+━━━ 老師點破的結構性慣性 ━━━
+「做完一步驟不檢驗、靠直覺前進、靠別人告訴」
+→ 解：工程步驟後 5 秒反問「我憑什麼覺得這對？」
+
+━━━ W20 主線 ━━━
+5/12 前：baseline 2D FDTD（不含半週期修正）
+5/13–14：修正版 FDTD + 場型對比
+5/15 meeting 前：一張 A4 對比圖 + 三個自我質疑點
+
+━━━ 本週最重要的一課 ━━━
+α(DC) fitting 寫出來不等於 α(z) 閉環完成。
+從 |E|² 反推丟掉了相位，這個缺口在數學上看不見，
+在工程實作會破壞性干涉地展現。
+5/4 老師當場點破，是這個月最有價值的進展——
+即使它穿著批評的外衣。</div>
+  <button class="wm-btn" onclick="cpWM('wm-W19',this)">📋 複製 W19 模組</button>
+</div>
+
+<!-- ══ W20 空白模板 ══ -->
+<div class="view" id="view-W20">
+  <div class="ph">
+    <div class="ph-l"><span class="wtag">W20 · 2026/05/10–05/16</span><h1>本週進行中</h1><div class="wsub">Baseline 2D FDTD · 修正版場型對比 · 5/15 meeting 前 A4 對比圖</div></div>
+    <div class="ph-r"><span class="badge b-b"><span class="bd"></span>當前週次</span></div>
+  </div>
+  <div class="s-alert mb20">
+    <div style="font-size:20px;flex-shrink:0;margin-top:2px">🎯</div>
+    <div><div class="sa-l">W20 核心任務</div><div class="sa-t"><strong>5/15 meeting 前備妥一張 A4 對比圖（有修正 vs 無修正場型）+ 三個自我質疑點。</strong>每個工程步驟後 5 秒反問「我憑什麼覺得這對？」答不出就標記待驗証。</div></div>
+  </div>
+  <div class="grid g2 mb20">
+    <div class="card">
+      <div class="chd"><div class="cttl">W20 主線任務</div><div class="cbadge cb-b">進行中</div></div>
+      <div class="il">
+        <div class="ii ii-next"><div class="iico">1️⃣</div><div class="iitx"><strong>5/12 前</strong>baseline 2D FDTD（不含半週期修正）</div></div>
+        <div class="ii ii-next"><div class="iico">2️⃣</div><div class="iitx"><strong>5/13–14</strong>修正版 FDTD + 場型對比圖</div></div>
+        <div class="ii ii-next"><div class="iico">3️⃣</div><div class="iitx"><strong>5/15 meeting 前</strong>A4 對比圖 + 三個自我質疑點</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chd"><div class="cttl">週檢討完成後更新</div></div>
+      <div style="text-align:center;padding:22px 0;color:var(--t3)">
+        <div style="font-size:30px;margin-bottom:9px">📝</div>
+        <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1px">將 WEEKLY_MODULE</div>
+        <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1px;color:var(--t4)">貼回此頁即可更新</div>
+      </div>
+    </div>
+  </div>
+  <div class="upl">
+    <div class="upi"><div class="uw">W21</div><div class="ud">05/17–05/23</div><div class="un">·· 待週檢討後填入 ··</div></div>
+    <div class="upi"><div class="uw">W22</div><div class="ud">05/24–05/30</div><div class="un">·· 待週檢討後填入 ··</div></div>
+    <div class="upi"><div class="uw">W23</div><div class="ud">05/31–06/06</div><div class="un">·· 待週檢討後填入 ··</div></div>
+  </div>
+</div>
+
+<!-- ══ CROSS-WEEK ══ -->
+<div class="view" id="view-crossweek">
+  <div class="ph">
+    <div class="ph-l"><span class="wtag">全域視圖</span><h1>跨週趨勢追蹤</h1><div class="wsub">W11–W19 九週 · 逐日張數 · 評分趨勢 · 模式分析</div></div>
+    <div class="ph-r"><span class="badge b-p"><span class="bd"></span>9 週已記錄</span></div>
+  </div>
+
+  <div class="card mb20">
+    <div class="chd"><div class="cttl">九週每日張數總覽</div><div class="cbadge cb-p">W11–W19 · 共 198 張</div></div>
+    <div style="display:grid;grid-template-columns:repeat(9,1fr);gap:4px;margin-top:4px">
+      <div><div style="font-family:var(--font-m);font-size:8px;color:var(--cyan);margin-bottom:5px">W11·45</div><div class="mc" id="mc-W11"></div></div>
+      <div><div style="font-family:var(--font-m);font-size:8px;color:var(--yellow);margin-bottom:5px">W12·23</div><div class="mc" id="mc-W12"></div></div>
+      <div><div style="font-family:var(--font-m);font-size:8px;color:var(--blue);margin-bottom:5px">W13·29</div><div class="mc" id="mc-W13"></div></div>
+      <div><div style="font-family:var(--font-m);font-size:8px;color:var(--green);margin-bottom:5px">W14·38</div><div class="mc" id="mc-W14"></div></div>
+      <div><div style="font-family:var(--font-m);font-size:8px;color:var(--red);margin-bottom:5px">W15·17⚠</div><div class="mc" id="mc-W15"></div></div>
+      <div><div style="font-family:var(--font-m);font-size:8px;color:var(--purple);margin-bottom:5px">W16·22↑</div><div class="mc" id="mc-W16"></div></div>
+      <div><div style="font-family:var(--font-m);font-size:8px;color:var(--yellow);margin-bottom:5px">W17·2⚠</div><div class="mc" id="mc-W17"></div></div>
+      <div><div style="font-family:var(--font-m);font-size:8px;color:var(--orange);margin-bottom:5px">W18·9↑</div><div class="mc" id="mc-W18"></div></div>
+      <div><div style="font-family:var(--font-m);font-size:8px;color:var(--red);margin-bottom:5px">W19·13</div><div class="mc" id="mc-W19"></div></div>
+    </div>
+    <div style="margin-top:10px;font-family:var(--font-m);font-size:9px;color:var(--t3)">
+      九週合計 198 張 · W11 最高（45）· W17 最低（2）· W19 出現第二個 0 張日（5/7 雲林逃避）
+    </div>
+  </div>
+
+  <div class="card mb20">
+    <div class="chd">
+      <div class="cttl">歷週評分趨勢（/5）</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <span class="sc sc-risk" style="font-size:9px">1–2 危險</span>
+        <span class="sc sc-prog" style="font-size:9px">3 基本</span>
+        <span class="sc sc-done" style="font-size:9px">4–5 穩定</span>
+      </div>
+    </div>
+    <div class="cw-wrap">
+      <table class="cwt">
+        <thead><tr><th>週次</th><th>日期</th><th>研究聚焦</th><th>推導深度</th><th>執行紀律</th><th>模擬進度</th><th>情緒穩定</th><th>恢復品質</th><th>定位摘要</th></tr></thead>
+        <tbody>
+          <tr><td>W11</td><td>03/08–14</td><td><span class="tc s3">3</span></td><td><span class="tc s4">4</span></td><td><span class="tc s2">2</span></td><td><span class="tc s1">1</span></td><td><span class="tc s3">3</span></td><td><span class="tc s-">—</span></td><td>Fourier理論重建 · 45張</td></tr>
+          <tr><td>W12</td><td>03/15–21</td><td><span class="tc s4">4</span></td><td><span class="tc s4">4</span></td><td><span class="tc s3">3</span></td><td><span class="tc s2">2</span></td><td><span class="tc s3">3</span></td><td><span class="tc s-">—</span></td><td>HG收斂 · 命題一三 · 23張</td></tr>
+          <tr><td>W13</td><td>03/22–28</td><td><span class="tc s2">2</span></td><td><span class="tc s3">3</span></td><td><span class="tc s2">2</span></td><td><span class="tc s1">1</span></td><td><span class="tc s3">3</span></td><td><span class="tc s-">—</span></td><td>CXDF · q臨界條件 · 29張</td></tr>
+          <tr class="rw14"><td>W14 ⭐</td><td>03/29–04/04</td><td><span class="tc s4">4</span></td><td><span class="tc s5">5</span></td><td><span class="tc s3">3</span></td><td><span class="tc s3">3</span></td><td><span class="tc s4">4</span></td><td><span class="tc s-">—</span></td><td>Lambert W · η≤2/3 · 38張</td></tr>
+          <tr class="rw15"><td>W15 ⚠</td><td>04/05–11</td><td><span class="tc s3">3</span></td><td><span class="tc s4">4</span></td><td><span class="tc s2">2</span></td><td><span class="tc s2">2</span></td><td><span class="tc s2">2</span></td><td><span class="tc s2">2</span></td><td>命題六骨架 · 0張日 · 17張</td></tr>
+          <tr style="background:rgba(167,139,250,.03)"><td style="color:var(--purple)">W16 ↑</td><td>04/12–18</td><td><span class="tc s4">4</span></td><td><span class="tc s5">5</span></td><td><span class="tc s3">3</span></td><td><span class="tc s3">3</span></td><td><span class="tc s3">3</span></td><td><span class="tc s3">3</span></td><td>三軌並行 · 投稿戰略 · 22張</td></tr>
+          <tr class="rw15"><td>W17 ⚠</td><td>04/19–25</td><td><span class="tc s2">2</span></td><td><span class="tc s2">2</span></td><td><span class="tc s2">2</span></td><td><span class="tc s1">1</span></td><td><span class="tc s3">3</span></td><td><span class="tc s3">3</span></td><td>Journal-first確立 · 志工 · 2張</td></tr>
+          <tr class="rw15"><td>W18 ⚠</td><td>04/26–05/02</td><td><span class="tc s2">2</span></td><td><span class="tc s2">2</span></td><td><span class="tc s2">2</span></td><td><span class="tc s1">1</span></td><td><span class="tc s3">3</span></td><td><span class="tc s3">3</span></td><td>1977α重審 · 戰略漂移 · 9張</td></tr>
+          <tr class="rw15"><td>W19 ⚠</td><td>05/03–09</td><td><span class="tc s2">2</span></td><td><span class="tc s2">2.5</span></td><td><span class="tc s1">1.5</span></td><td><span class="tc s2">2.5</span></td><td><span class="tc s2">2</span></td><td><span class="tc s2">2.5</span></td><td>α fitting完成·相位缺口揭露·13張</td></tr>
+          <tr><td style="color:var(--t3)">W20</td><td style="color:var(--t3)">05/10–16</td><td><span class="tc s-">—</span></td><td><span class="tc s-">—</span></td><td><span class="tc s-">—</span></td><td><span class="tc s-">—</span></td><td><span class="tc s-">—</span></td><td><span class="tc s-">—</span></td><td style="color:var(--t3)">進行中</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:10px;font-family:var(--font-m);font-size:9px;color:var(--t3)">
+      W19 週均 2.17/5，近五週最低。W19 首次使用半分評分（1.5/2.5）。模擬推進連續 9 週偏低（1/2/1/3/2/3/1/1/2.5）。
+    </div>
+  </div>
+
+  <div class="grid g2 mb20">
+    <div class="card">
+      <div class="chd"><div class="cttl">重複瓶頸（9週共識）</div><div class="cbadge cb-r">結構性問題</div></div>
+      <div class="il">
+        <div class="ii ii-loss"><div class="iico">🔁</div><div class="iitx"><strong>「做完不檢驗」慣性</strong>W19 老師正式命名：「做完一步驟不檢驗、靠直覺前進、靠別人告訴」——這是 sprint 期所有卡點的根本原因</div></div>
+        <div class="ii ii-loss"><div class="iico">🔁</div><div class="iitx"><strong>認知衝擊後逃避</strong>5/4 meeting → 5/6–5/8 雲林三日逃避，第二個 0 張日出現。衝擊後 24h 內必須書寫整理</div></div>
+        <div class="ii ii-loss"><div class="iico">🔁</div><div class="iitx"><strong>模擬推進（1/2/1/3/2/3/1/1/2.5）</strong>W19 雖有 α fitting 但依賴老師點破才識別相位缺口，不自主</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chd"><div class="cttl">仍有效的高槓桿行為</div><div class="cbadge cb-g">強化</div></div>
+      <div class="il">
+        <div class="ii ii-win"><div class="iico">⚡</div><div class="iitx"><strong>老師 meeting 揭露缺口</strong>5/4 點破相位問題，是本月最有價值的單一事件</div></div>
+        <div class="ii ii-win"><div class="iico">⚡</div><div class="iitx"><strong>5 秒反問習慣（新確立）</strong>「我憑什麼覺得這對？」是終結「做完不檢驗」的具體工具</div></div>
+        <div class="ii ii-win"><div class="iico">⚡</div><div class="iitx"><strong>5/9 七張強力反彈</strong>認知衝擊後仍可高產出，關鍵是縮短衝擊→行動的間隔</div></div>
+      </div>
+    </div>
+  </div>
+    <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin-top:4px">
+      <div><div style="font-family:var(--font-m);font-size:8px;color:var(--cyan);margin-bottom:5px">W11 · 45張</div><div class="mc" id="mc-W11"></div></div>
+      <div><div style="font-family:var(--font-m);font-size:8px;color:var(--yellow);margin-bottom:5px">W12 · 23張</div><div class="mc" id="mc-W12"></div></div>
+      <div><div style="font-family:var(--font-m);font-size:8px;color:var(--blue);margin-bottom:5px">W13 · 29張</div><div class="mc" id="mc-W13"></div></div>
+      <div><div style="font-family:var(--font-m);font-size:8px;color:var(--green);margin-bottom:5px">W14 · 38張</div><div class="mc" id="mc-W14"></div></div>
+      <div><div style="font-family:var(--font-m);font-size:8px;color:var(--red);margin-bottom:5px">W15 · 17張⚠</div><div class="mc" id="mc-W15"></div></div>
+      <div><div style="font-family:var(--font-m);font-size:8px;color:var(--purple);margin-bottom:5px">W16 · 22張↑</div><div class="mc" id="mc-W16"></div></div>
+      <div><div style="font-family:var(--font-m);font-size:8px;color:var(--yellow);margin-bottom:5px">W17 · 2張⚠</div><div class="mc" id="mc-W17"></div></div>
+      <div><div style="font-family:var(--font-m);font-size:8px;color:var(--orange);margin-bottom:5px">W18 · 9張↑</div><div class="mc" id="mc-W18"></div></div>
+    </div>
+    <div style="margin-top:10px;font-family:var(--font-m);font-size:9px;color:var(--t3)">
+      八週合計 185 張 · W11 最高（45）· W17 最低（2）· W18 回升至 9 · 模擬推進連續 8 週偏低（1/2/1/3/2/3/1/1）
+    </div>
+  </div>
+
+  <div class="card mb20">
+    <div class="chd">
+      <div class="cttl">歷週評分趨勢（/5）</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <span class="sc sc-risk" style="font-size:9px">1–2 危險</span>
+        <span class="sc sc-prog" style="font-size:9px">3 基本</span>
+        <span class="sc sc-done" style="font-size:9px">4–5 穩定</span>
+      </div>
+    </div>
+    <div class="cw-wrap">
+      <table class="cwt">
+        <thead><tr><th>週次</th><th>日期</th><th>研究聚焦</th><th>推導深度</th><th>執行紀律</th><th>模擬進度</th><th>情緒穩定</th><th>恢復品質</th><th>定位摘要</th></tr></thead>
+        <tbody>
+          <tr><td>W11</td><td>03/08–14</td><td><span class="tc s3">3</span></td><td><span class="tc s4">4</span></td><td><span class="tc s2">2</span></td><td><span class="tc s1">1</span></td><td><span class="tc s3">3</span></td><td><span class="tc s-">—</span></td><td>Fourier理論重建·45張</td></tr>
+          <tr><td>W12</td><td>03/15–21</td><td><span class="tc s4">4</span></td><td><span class="tc s4">4</span></td><td><span class="tc s3">3</span></td><td><span class="tc s2">2</span></td><td><span class="tc s3">3</span></td><td><span class="tc s-">—</span></td><td>HG收斂·命題一三·23張</td></tr>
+          <tr><td>W13</td><td>03/22–28</td><td><span class="tc s2">2</span></td><td><span class="tc s3">3</span></td><td><span class="tc s2">2</span></td><td><span class="tc s1">1</span></td><td><span class="tc s3">3</span></td><td><span class="tc s-">—</span></td><td>CXDF·q臨界條件·29張</td></tr>
+          <tr class="rw14"><td>W14 ⭐</td><td>03/29–04/04</td><td><span class="tc s4">4</span></td><td><span class="tc s5">5</span></td><td><span class="tc s3">3</span></td><td><span class="tc s3">3</span></td><td><span class="tc s4">4</span></td><td><span class="tc s-">—</span></td><td>Lambert W·η≤2/3·38張</td></tr>
+          <tr class="rw15"><td>W15 ⚠</td><td>04/05–11</td><td><span class="tc s3">3</span></td><td><span class="tc s4">4</span></td><td><span class="tc s2">2</span></td><td><span class="tc s2">2</span></td><td><span class="tc s2">2</span></td><td><span class="tc s2">2</span></td><td>命題六骨架·0張日·17張</td></tr>
+          <tr style="background:rgba(167,139,250,.03)"><td style="color:var(--purple)">W16 ↑</td><td>04/12–18</td><td><span class="tc s4">4</span></td><td><span class="tc s5">5</span></td><td><span class="tc s3">3</span></td><td><span class="tc s3">3</span></td><td><span class="tc s3">3</span></td><td><span class="tc s3">3</span></td><td>三軌並行·投稿戰略·22張</td></tr>
+          <tr class="rw15"><td>W17 ⚠</td><td>04/19–25</td><td><span class="tc s2">2</span></td><td><span class="tc s2">2</span></td><td><span class="tc s2">2</span></td><td><span class="tc s1">1</span></td><td><span class="tc s3">3</span></td><td><span class="tc s3">3</span></td><td>Journal-first確立·志工·2張</td></tr>
+          <tr class="rw15"><td>W18 ⚠</td><td>04/26–05/02</td><td><span class="tc s2">2</span></td><td><span class="tc s2">2</span></td><td><span class="tc s2">2</span></td><td><span class="tc s1">1</span></td><td><span class="tc s3">3</span></td><td><span class="tc s3">3</span></td><td>1977α重審·戰略漂移·9張</td></tr>
+          <tr class="rw15"><td>W19 ⚠</td><td>05/03–09</td><td><span class="tc s2">2</span></td><td><span class="tc s2">2.5</span></td><td><span class="tc s1">1.5</span></td><td><span class="tc s2">2.5</span></td><td><span class="tc s2">2</span></td><td><span class="tc s2">2.5</span></td><td>α fitting完成·相位缺口·13張</td></tr>
+          <tr><td style="color:var(--t3)">W20</td><td style="color:var(--t3)">05/10–16</td><td><span class="tc s-">—</span></td><td><span class="tc s-">—</span></td><td><span class="tc s-">—</span></td><td><span class="tc s-">—</span></td><td><span class="tc s-">—</span></td><td><span class="tc s-">—</span></td><td style="color:var(--t3)">進行中</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:10px;font-family:var(--font-m);font-size:9px;color:var(--t3)">
+      W19 週均 2.17/5，近五週最低。模擬推進九週累計（1/2/1/3/2/3/1/1/2.5），老師正式點名「做完不檢驗」慣性。
+    </div>
+  </div>
+
+</div><!-- end view-crossweek -->
+
+<!-- ══ MASTER STATE ══ -->
+<div class="view" id="view-masterstate">
+  <div class="ph">
+    <div class="ph-l"><span class="wtag">主對話壓縮記憶</span><h1>MASTER_STATE</h1><div class="wsub">W11–W19 九週整合 · 可直接複製貼回主對話</div></div>
+    <div class="ph-r"><span class="badge b-b"><span class="bd"></span>W11–W19 整合</span></div>
+  </div>
+  <div class="s-alert mb20">
+    <div style="font-size:20px;flex-shrink:0;margin-top:2px">🔬</div>
+    <div><div class="sa-l">W20 唯一策略提醒</div><div class="sa-t"><strong>5/15 meeting 前必須備妥一張 A4 對比圖（有修正 vs 無修正場型）+ 三個自我質疑點。</strong>每個工程步驟後 5 秒反問「我憑什麼覺得這對？」這是終結九週「做完不檢驗」慣性的具體工具。</div></div>
+  </div>
+  <div class="ms-box mb14" id="ms-content">已收錄週數: 9（W11–W19）
+目前階段: 工程實作期・相位閉環重新打開
+長期主線: 寬頻化且高耦合效率的光柵耦合器 · HG0+HG2遠場 → CE×BW · OE/OL Journal-first
+─────────────────────────────
+穩定優勢:
+  · Paper 候選命題體系完整（η≤2/3、Lambert W、FOM最佳點、SiO₂不變、P→S→α、α(DC)fitting）
+  · α(DC) fitting curve 完成（W19，誤差 10⁻⁴），可作方法章圖
+  · 老師 meeting 是最高效校準點（每次都揭露關鍵缺口）
+  · 5 秒反問習慣（W19新確立）：「我憑什麼覺得這對？」→終結做完不檢驗
+─────────────────────────────
+重複瓶頸（結構性）:
+  · 「做完一步驟不檢驗、靠直覺前進、靠別人告訴」：W19 老師正式命名，是所有卡點的根本原因
+  · 認知衝擊後逃避：W19 5/4 meeting → 5/6–5/8 三日逃避，出現第二個 0 張日（5/7）
+    → 解：衝擊後 24h 內強制書寫整理
+  · 模擬推進（1/2/1/3/2/3/1/1/2.5）：九週累計低迷
+  · 論文寫作（W17–W19 連續三週幾乎零進展）：相位缺口出現後需重估寫作時程
+─────────────────────────────
+近四週趨勢:
+  W16：三軌並行，投稿戰略啟動，均分 3.5（22張）
+  W17：Journal-first確立，志工切斷，均分 2.2（2張）
+  W18：1977α重審，戰略漂移，均分 2.0（9張）
+  W19：α fitting完成，相位缺口揭露，均分 2.17（13張）
+─────────────────────────────
+研究成熟度: 工程閉環重新打開·需要半週期 no-etch 修正
+  Paper 候選（已確認）:
+    · 命題三 / q臨界條件 / Lambert W / η≤2/3 / FOM最佳點
+    · SiO₂不變性 / P→S→α閉環 / α(DC)fitting curve（W19新增）
+  高風險（待 FDTD 驗証）:
+    · 半週期修正能正確翻轉相位（W20 第一輪可測）
+    · DC=100% 在 α=0 段正確性
+    · α 變化段落邊界處理
+─────────────────────────────
+節奏：W15/W17/W19 三個警示週，W16 唯一明顯回穩週
+第二個 0 張日（5/7）已出現；認知衝擊→逃避→24h整理是W20防範重點
+─────────────────────────────
+下一階段策略（W20）:
+  1. 5/12 前：baseline 2D FDTD（不含半週期修正）
+  2. 5/13–14：修正版 FDTD + 場型對比
+  3. 5/15 meeting 前：A4 對比圖 + 三個自我質疑點
+  4. 每步驟後 5 秒反問「我憑什麼覺得這對？」
+  5. 認知衝擊後 24h 內強制書寫整理
+─────────────────────────────
+最新一週: W19（05/03–05/09）
+  · α(DC) fitting curve 數值化完成（誤差 10⁻⁴）✅ Paper候選
+  · 5/4 老師點破相位缺口：|E|²→α 丟掉 HG0+HG2 局部正負相位 ✅
+  · 半週期 no-etch 修正方案提出（待 FDTD 驗証）⚠️
+  · 5/7 第二個 0 張日（雲林逃避反應）⚠️
+  · 週均 2.17/5，13張，近五週最低</div>
+  </div>
+  <button class="wm-btn" onclick="cpWM('ms-content',this)">📋 複製 MASTER_STATE</button>
+</div>
+
+</main>
+</div>
+
+<script>
+/* ── DATA ── */
+const SC5 = {
+  W11:{focus:3,derive:4,disc:2,sim:1,emo:3},
+  W12:{focus:4,derive:4,disc:3,sim:2,emo:3},
+  W13:{focus:2,derive:3,disc:2,sim:1,emo:3},
+  W14:{focus:4,derive:5,disc:3,sim:3,emo:4},
+  W16:{focus:4,derive:5,disc:3,sim:3,emo:3},
+};
+const SC6_W15 = [
+  {n:'研究聚焦',v:3},{n:'推導深度',v:4},{n:'執行紀律',v:2},
+  {n:'模擬進度',v:2},{n:'恢復品質',v:2},{n:'情緒穩定',v:2},
+];
+const SC5_KEYS = ['focus','derive','disc','sim','emo'];
+const SC5_NAMES = ['研究聚焦','推導深度','執行紀律','模擬進度','情緒穩定'];
+
+const TL = {
+  W11:[
+    {d:'3/8', p:5,  t:'ok',   tx:'Haus重讀'},
+    {d:'3/9', p:6,  t:'ok',   tx:'Fresnel重建'},
+    {d:'3/10',p:2,  t:'stuck',tx:'進度慢'},
+    {d:'3/11',p:7,  t:'ok',   tx:'底層補定義'},
+    {d:'3/12',p:11, t:'star', tx:'封裝⭐'},
+    {d:'3/13',p:8,  t:'star', tx:'LaTeX⭐'},
+    {d:'3/14',p:6,  t:'ok',   tx:'命題三框架'},
+  ],
+  W12:[
+    {d:'3/15',p:4,t:'ok',  tx:'η守恆推導'},
+    {d:'3/16',p:4,t:'ok',  tx:'HG不變性'},
+    {d:'3/17',p:3,t:'slow',tx:'符號整理'},
+    {d:'3/18',p:3,t:'slow',tx:'架構建立'},
+    {d:'3/19',p:3,t:'slow',tx:'Poly-Gaussian'},
+    {d:'3/20',p:3,t:'slow',tx:'老師校準'},
+    {d:'3/21',p:3,t:'slow',tx:'子題一收斂'},
+  ],
+  W13:[
+    {d:'3/22',p:5,t:'ok',  tx:'子題三接線'},
+    {d:'3/23',p:2,t:'stuck',tx:'ηmax猜測'},
+    {d:'3/24',p:5,t:'ok',  tx:'Shape layer'},
+    {d:'3/25',p:3,t:'slow',tx:'符號重訂'},
+    {d:'3/26',p:3,t:'slow',tx:'打轉'},
+    {d:'3/27',p:2,t:'stuck',tx:'架構整理'},
+    {d:'3/28',p:9,t:'star',tx:'近似展開⭐'},
+  ],
+  W14:[
+    {d:'3/29',p:8,t:'ok',  tx:'D-Center'},
+    {d:'3/30',p:7,t:'ok',  tx:'Meeting校準'},
+    {d:'3/31',p:7,t:'star',tx:'Lambert W⭐'},
+    {d:'4/1', p:5,t:'ok',  tx:'η≤2/3'},
+    {d:'4/2', p:3,t:'slow',tx:'Mathcad移植'},
+    {d:'4/3', p:5,t:'ok',  tx:'工程補強'},
+    {d:'4/4', p:3,t:'slow',tx:'Mathcad完善'},
+  ],
+  W15:[
+    {d:'4/5', p:4,t:'ok',  tx:'FOM推導+規劃'},
+    {d:'4/6', p:4,t:'ok',  tx:'Lambert W（凌晨2:30睡）'},
+    {d:'4/7', p:1,t:'slow',tx:'讀2020 paper'},
+    {d:'4/8', p:0,t:'zero',tx:'0張⚠商務情緒'},
+    {d:'4/9', p:1,t:'slow',tx:'鼓勵後躊躇'},
+    {d:'4/10',p:4,t:'ok',  tx:'Meeting觸發'},
+    {d:'4/11',p:3,t:'ok',  tx:'近/遠場寫出'},
+  ],
+  W16:[
+    {d:'4/12',p:2,t:'ok',  tx:'Michelle陪跑啟動'},
+    {d:'4/13',p:2,t:'ok',  tx:'C-band確認'},
+    {d:'4/14',p:2,t:'ok',  tx:'模擬閉環成功'},
+    {d:'4/15',p:4,t:'ok',  tx:'Fitting對齊論文'},
+    {d:'4/16',p:1,t:'slow',tx:'小黑討論後鬆懈'},
+    {d:'4/17',p:2,t:'ok',  tx:'η_max vs FOM'},
+    {d:'4/18',p:9,t:'star',tx:'2020重現+姐夫⭐'},
+  ],
+  W17:[
+    {d:'4/19',p:1,   t:'ok',      tx:'奕清討論・戰略規劃'},
+    {d:'4/20',p:null,t:'unknown', tx:'志工（資料不足）'},
+    {d:'4/21',p:null,t:'unknown', tx:'志工（資料不足）'},
+    {d:'4/22',p:null,t:'unknown', tx:'志工（資料不足）'},
+    {d:'4/23',p:null,t:'unknown', tx:'志工（資料不足）'},
+    {d:'4/24',p:0,   t:'star',    tx:'老師meeting⭐戰略確立'},
+    {d:'4/25',p:1,   t:'ok',      tx:'志工後回軌'},
+  ],
+  W18:[
+    {d:'4/26',p:0,t:'zero',tx:'志工尾巴'},
+    {d:'4/27',p:0,t:'zero',tx:'志工尾巴'},
+    {d:'4/28',p:1,t:'ok',  tx:'主動回軌'},
+    {d:'4/29',p:3,t:'ok',  tx:'1977α左偏分析'},
+    {d:'4/30',p:2,t:'ok',  tx:'右偏+子題收口'},
+    {d:'5/1', p:2,t:'ok',  tx:'命題6整理'},
+    {d:'5/2', p:1,t:'slow',tx:'收尾'},
+  ],
+  W19:[
+    {d:'5/3', p:1,t:'slow',tx:'5秒反問習慣嘗試'},
+    {d:'5/4', p:2,t:'ok',  tx:'α fitting完成+Meeting'},
+    {d:'5/5', p:1,t:'slow',tx:'相位缺口消化'},
+    {d:'5/6', p:1,t:'slow',tx:'雲林逃避開始'},
+    {d:'5/7', p:0,t:'zero',tx:'0張⚠雲林逃避'},
+    {d:'5/8', p:1,t:'slow',tx:'雲林最後一天'},
+    {d:'5/9', p:7,t:'star',tx:'強力反彈⭐'},
+  ],
+};
+
+const PC = {
+  W11:{bar:'rgba(6,182,212,.5)',  star:'#06b6d4'},
+  W12:{bar:'rgba(245,158,11,.5)', star:'#f59e0b'},
+  W13:{bar:'rgba(59,130,246,.5)', star:'#3b82f6'},
+  W14:{bar:'rgba(16,185,129,.5)', star:'#10b981'},
+  W15:{bar:'rgba(245,158,11,.4)', star:'#a78bfa', zero:'rgba(239,68,68,.5)'},
+  W16:{bar:'rgba(167,139,250,.5)', star:'#a78bfa'},
+  W17:{bar:'rgba(245,158,11,.4)', star:'#a78bfa', zero:'rgba(100,80,40,.4)', unknown:'rgba(42,49,71,.5)'},
+  W18:{bar:'rgba(245,158,11,.4)', star:'#f59e0b', zero:'rgba(239,68,68,.45)'},
+  W19:{bar:'rgba(239,68,68,.35)', star:'#a78bfa', zero:'rgba(239,68,68,.5)'},
+};
+
+const SC6_W15 = [
+  {n:'研究主線專注',v:3},{n:'推導深度',v:4},{n:'執行紀律',v:2},
+  {n:'模擬進度',v:2},{n:'恢復品質',v:2},{n:'情緒穩定',v:2},
+];
+const SC6_W16 = [
+  {n:'研究主線專注',v:4},{n:'推導深度',v:5},{n:'執行紀律',v:3},
+  {n:'模擬進度',v:3},{n:'恢復品質',v:3},{n:'情緒穩定',v:3},
+];
+const SC6_W17 = [
+  {n:'研究主線專注',v:2},{n:'推導深度',v:2},{n:'執行紀律',v:2},
+  {n:'模擬進度',v:1},{n:'恢復品質',v:3},{n:'情緒穩定',v:3},
+];
+const SC6_W18 = [
+  {n:'研究主線專注',v:2},{n:'推導深度',v:2},{n:'執行紀律',v:2},
+  {n:'模擬進度',v:1},{n:'恢復品質',v:3},{n:'情緒穩定',v:3},
+];
+const SC6_W19 = [
+  {n:'研究主線專注',v:2},{n:'推導深度',v:2.5},{n:'執行紀律',v:1.5},
+  {n:'模擬進度',v:2.5},{n:'恢復品質',v:2.5},{n:'情緒穩定',v:2},
+];
+
+/* ── RENDER SCORES /5 ── */
+function renderSc5(w){
+  const el=document.getElementById('sc-'+w); if(!el)return;
+  const d=SC5[w];
+  el.innerHTML=SC5_KEYS.map((k,i)=>{
+    const v=d[k],p=v/5*100;
+    const c=v>=4?'sf-g':v===3?'sf-b':v===2?'sf-y':'sf-r';
+    const cv=v>=4?'var(--green)':v===3?'var(--blue)':v===2?'var(--yellow)':'var(--red)';
+    return `<div class="sr"><div class="sn">${SC5_NAMES[i]}</div><div class="st"><div class="sf ${c}" data-w="${p}" style="width:0%"></div></div><div class="sv" style="color:${cv}">${v}</div><div class="ss">/5</div></div>`;
+  }).join('');
+}
+
+/* ── RENDER SCORES /5 W15+W16 ── */
+function renderSc6(w,data){
+  const el=document.getElementById('sc-'+w); if(!el)return;
+  el.innerHTML=data.map(s=>{
+    const p=s.v/5*100;
+    const c=s.v>=4?'sf-g':s.v===3?'sf-b':s.v===2?'sf-y':'sf-r';
+    const cv=s.v>=4?'var(--green)':s.v===3?'var(--blue)':s.v===2?'var(--yellow)':'var(--red)';
+    return `<div class="sr"><div class="sn">${s.n}</div><div class="st"><div class="sf ${c}" data-w="${p}" style="width:0%"></div></div><div class="sv" style="color:${cv}">${s.v}</div><div class="ss">/5</div></div>`;
+  }).join('');
+}
+
+/* ── RENDER TIMELINE ── */
+function renderTL(w){
+  const el=document.getElementById('tl-'+w); if(!el)return;
+  el.innerHTML=TL[w].map(d=>{
+    const cls=d.t==='star'?'tn-star':d.t==='ok'?'tn-ok':d.t==='slow'?'tn-slow':d.t==='zero'?'tn-zero':d.t==='unknown'?'tn-unknown':'tn-slow';
+    const col=d.t==='star'?'var(--purple)':d.t==='ok'?'var(--green)':d.t==='slow'?'var(--yellow)':d.t==='zero'?'var(--red)':d.t==='unknown'?'var(--t3)':'var(--yellow)';
+    const node=d.t==='star'?'★':d.t==='zero'?'0':d.t==='unknown'?'?':(d.p!=null?d.p:'—');
+    const vLabel=d.p!=null?`${d.p}張`:'?';
+    return `<div class="td">
+      <div class="tn ${cls}">${node}</div>
+      <div class="td-date">${d.d}</div>
+      <div class="td-v" style="color:${col}">${vLabel}</div>
+      <div class="td-d">${d.tx}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── RENDER MINI CHART ── */
+function renderMC(w){
+  const el=document.getElementById('mc-'+w); if(!el)return;
+  const days=TL[w], col=PC[w];
+  const known=days.filter(d=>d.p!=null);
+  const maxP=Math.max(...known.map(d=>d.p),1);
+  el.innerHTML=days.map(d=>{
+    if(d.t==='unknown'){
+      return `<div class="mc-w"><div class="mc-v" style="color:var(--t4)">?</div><div class="mc-b" style="height:8px;background:${col.unknown||'rgba(42,49,71,.5)'};border:1px dashed var(--t4)"></div><div class="mc-l">${d.d.split('/')[1]}日</div></div>`;
+    }
+    const h=d.p===0?3:Math.max(4,Math.round(d.p/maxP*40));
+    let bc=d.t==='star'?col.star:d.t==='zero'?(col.zero||'rgba(239,68,68,.5)'):col.bar;
+    return `<div class="mc-w">
+      <div class="mc-v">${d.p}</div>
+      <div class="mc-b" style="height:${h}px;background:${bc}"></div>
+      <div class="mc-l">${d.d.split('/')[1]}日</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── NAVIGATION ── */
+function showV(id,el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  const v=document.getElementById('view-'+id);
+  if(v)v.classList.add('active');
+  if(el)el.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(animFills,60);
+}
+
+/* ── ANIMATE FILLS ── */
+function animFills(){
+  document.querySelectorAll('.sf[data-w]').forEach(f=>{f.style.width=f.getAttribute('data-w')+'%';});
+}
+
+/* ── COPY ── */
+function cpWM(id,btn){
+  const txt=document.getElementById(id).innerText;
+  const orig=btn.textContent;
+  const done=()=>{btn.textContent='✅ 已複製！';setTimeout(()=>btn.textContent=orig,2200);};
+  if(navigator.clipboard)navigator.clipboard.writeText(txt).then(done).catch(fb);else fb();
+  function fb(){const t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);done();}
+}
+
+/* ── INIT ── */
+window.addEventListener('DOMContentLoaded',()=>{
+  ['W11','W12','W13','W14'].forEach(w=>{renderSc5(w);renderTL(w);renderMC(w);});
+  renderSc6('W15',SC6_W15);renderTL('W15');renderMC('W15');
+  renderSc6('W16',SC6_W16);renderTL('W16');renderMC('W16');
+  renderSc6('W17',SC6_W17);renderTL('W17');renderMC('W17');
+  renderSc6('W18',SC6_W18);renderTL('W18');renderMC('W18');
+  renderSc6('W19',SC6_W19);renderTL('W19');renderMC('W19');
+  setTimeout(animFills,80);
+  document.querySelectorAll('.ni').forEach(n=>{if(n.textContent.includes('W19'))n.classList.add('active');});
+});
+</script>
+</body>
+</html>
